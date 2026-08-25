@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:polished_stromatolite_slab"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "#": {
+      "item": "inland_port:polished_stromatolite_slab"
+    }
+  },
+  "pattern": [
+    "# ",
+    "# "
+  ],
+  "result": {
+    "count": 1,
+    "id": "inland_port:stromatolite_pillar"
+  }
+}

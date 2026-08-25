@@ -1,0 +1,87 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_button"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_pressure_plate"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_fence"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_fence_gate"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_trapdoor"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_door"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_sign"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_hanging_sign"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_boat"
+    }
+  ],
+  "type": "farmersdelight:cutting",
+  "ingredients": [
+    {
+      "type": "neoforge:compound",
+      "children": [
+        {
+          "item": "inland_port:gumillea_button"
+        },
+        {
+          "item": "inland_port:gumillea_pressure_plate"
+        },
+        {
+          "item": "inland_port:gumillea_fence"
+        },
+        {
+          "item": "inland_port:gumillea_fence_gate"
+        },
+        {
+          "item": "inland_port:gumillea_trapdoor"
+        },
+        {
+          "item": "inland_port:gumillea_door"
+        },
+        {
+          "item": "inland_port:gumillea_sign"
+        },
+        {
+          "item": "inland_port:gumillea_hanging_sign"
+        },
+        {
+          "item": "inland_port:gumillea_boat"
+        }
+      ]
+    }
+  ],
+  "result": [
+    {
+      "chance": 0.75,
+      "item": {
+        "count": 1,
+        "id": "inland_port:gumillea_planks"
+      }
+    }
+  ],
+  "tool": {
+    "tag": "minecraft:axes"
+  }
+}

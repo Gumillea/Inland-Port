@@ -1,0 +1,22 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "inland_port:gumillea_logs"
+      }
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "tag": "inland_port:gumillea_logs"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "inland_port:gumillea_planks"
+  }
+}

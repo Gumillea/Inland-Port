@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "inland_port:block/stromatolite_bricks"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:polished_stromatolite"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_polished_stromatolite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "inland_port:polished_stromatolite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "inland_port:shaped/polished_stromatolite_slab"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_polished_stromatolite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "inland_port:shaped/polished_stromatolite_slab"
+    ]
+  }
+}

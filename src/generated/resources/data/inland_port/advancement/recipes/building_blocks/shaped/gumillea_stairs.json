@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_planks"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gumillea_planks": {
+      "conditions": {
+        "items": [
+          {
+            "items": "inland_port:gumillea_planks"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "inland_port:shaped/gumillea_stairs"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gumillea_planks"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "inland_port:shaped/gumillea_stairs"
+    ]
+  }
+}

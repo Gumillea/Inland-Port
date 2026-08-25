@@ -1,0 +1,18 @@
+{
+  "values": [
+    "inland_port:stromatolite",
+    "inland_port:chiseled_stromatolite",
+    "inland_port:stromatolite_stairs",
+    "inland_port:stromatolite_slab",
+    "inland_port:stromatolite_wall",
+    "inland_port:stromatolite_bricks",
+    "inland_port:stromatolite_brick_stairs",
+    "inland_port:stromatolite_brick_slab",
+    "inland_port:stromatolite_brick_wall",
+    "inland_port:polished_stromatolite",
+    "inland_port:polished_stromatolite_stairs",
+    "inland_port:polished_stromatolite_slab",
+    "inland_port:polished_stromatolite_wall",
+    "inland_port:stromatolite_pillar"
+  ]
+}

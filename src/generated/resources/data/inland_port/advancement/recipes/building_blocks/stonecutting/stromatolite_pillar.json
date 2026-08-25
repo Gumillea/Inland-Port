@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:stromatolite"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_stromatolite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "inland_port:stromatolite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "inland_port:stonecutting/stromatolite_pillar"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_stromatolite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "inland_port:stonecutting/stromatolite_pillar"
+    ]
+  }
+}

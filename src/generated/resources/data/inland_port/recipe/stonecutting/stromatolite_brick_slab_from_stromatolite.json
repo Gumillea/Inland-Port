@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:stromatolite"
+    }
+  ],
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "inland_port:stromatolite"
+  },
+  "result": {
+    "count": 2,
+    "id": "inland_port:stromatolite_brick_slab"
+  }
+}

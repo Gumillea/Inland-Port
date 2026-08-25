@@ -1,0 +1,38 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:gumillea_log"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gumillea_log": {
+      "conditions": {
+        "items": [
+          {
+            "items": "inland_port:gumillea_log"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "inland_port:shaped/gumillea_wood"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gumillea_log"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "inland_port:shaped/gumillea_wood"
+    ]
+  }
+}

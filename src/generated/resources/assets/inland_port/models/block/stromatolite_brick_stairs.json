@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "inland_port:block/stromatolite_bricks",
+    "side": "inland_port:block/stromatolite_bricks",
+    "top": "inland_port:block/stromatolite_bricks"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "inland_port:item/ansault_pie_slice"
+  }
+}

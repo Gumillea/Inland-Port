@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "inland_port:block/gumillea_planks",
+    "side": "inland_port:block/gumillea_planks",
+    "top": "inland_port:block/gumillea_planks"
+  }
+}

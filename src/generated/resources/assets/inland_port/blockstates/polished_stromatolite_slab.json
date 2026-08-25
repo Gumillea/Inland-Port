@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "inland_port:block/polished_stromatolite_slab"
+    },
+    "type=double": {
+      "model": "inland_port:block/polished_stromatolite"
+    },
+    "type=top": {
+      "model": "inland_port:block/polished_stromatolite_slab_top"
+    }
+  }
+}

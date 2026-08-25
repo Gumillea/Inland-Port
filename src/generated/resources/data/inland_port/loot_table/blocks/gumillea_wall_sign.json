@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "inland_port:gumillea_sign"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "inland_port:blocks/gumillea_wall_sign"
+}

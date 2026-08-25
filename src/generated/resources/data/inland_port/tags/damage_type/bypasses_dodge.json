@@ -1,0 +1,10 @@
+{
+  "values": [
+    "minecraft:starve",
+    "minecraft:fall",
+    "minecraft:out_of_world",
+    "minecraft:drown",
+    "minecraft:freeze",
+    "#minecraft:is_fire"
+  ]
+}

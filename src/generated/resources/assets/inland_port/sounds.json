@@ -1,0 +1,17 @@
+{
+  "entity.player.attack.miss": {
+    "sounds": [
+      "inland_port:entity/player/attack/miss"
+    ]
+  },
+  "entity.player.debuff.immune": {
+    "sounds": [
+      "inland_port:entity/player/debuff/immune"
+    ]
+  },
+  "record.flekkefjord": {
+    "sounds": [
+      "inland_port:record/flekkefjord"
+    ]
+  }
+}

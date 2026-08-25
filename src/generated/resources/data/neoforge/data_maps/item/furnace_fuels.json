@@ -1,0 +1,49 @@
+{
+  "values": {
+    "inland_port:gumillea_button": {
+      "burn_time": 100
+    },
+    "inland_port:gumillea_door": {
+      "burn_time": 200
+    },
+    "inland_port:gumillea_fence": {
+      "burn_time": 300
+    },
+    "inland_port:gumillea_fence_gate": {
+      "burn_time": 300
+    },
+    "inland_port:gumillea_hanging_sign": {
+      "burn_time": 800
+    },
+    "inland_port:gumillea_log": {
+      "burn_time": 300
+    },
+    "inland_port:gumillea_planks": {
+      "burn_time": 300
+    },
+    "inland_port:gumillea_pressure_plate": {
+      "burn_time": 300
+    },
+    "inland_port:gumillea_sign": {
+      "burn_time": 200
+    },
+    "inland_port:gumillea_slab": {
+      "burn_time": 150
+    },
+    "inland_port:gumillea_stairs": {
+      "burn_time": 300
+    },
+    "inland_port:gumillea_trapdoor": {
+      "burn_time": 300
+    },
+    "inland_port:gumillea_wood": {
+      "burn_time": 300
+    },
+    "inland_port:stripped_gumillea_log": {
+      "burn_time": 300
+    },
+    "inland_port:stripped_gumillea_wood": {
+      "burn_time": 300
+    }
+  }
+}

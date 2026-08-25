@@ -1,0 +1,40 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:ansault_pie_slice"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:ansault_pie_slice"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:ansault_pie_slice"
+    },
+    {
+      "type": "neoforge:item_exists",
+      "item": "inland_port:ansault_pie_slice"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "inland_port:ansault_pie_slice"
+    },
+    {
+      "item": "inland_port:ansault_pie_slice"
+    },
+    {
+      "item": "inland_port:ansault_pie_slice"
+    },
+    {
+      "item": "inland_port:ansault_pie_slice"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "inland_port:ansault_pie"
+  }
+}

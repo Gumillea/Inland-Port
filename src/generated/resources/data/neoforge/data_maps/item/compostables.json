@@ -1,0 +1,13 @@
+{
+  "values": {
+    "inland_port:ansault_pie": {
+      "chance": 1.0
+    },
+    "inland_port:ansault_pie_slice": {
+      "chance": 0.5
+    },
+    "inland_port:gumillea_leaves": {
+      "chance": 0.3
+    }
+  }
+}

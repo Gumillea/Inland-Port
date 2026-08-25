@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "inland_port:block/stromatolite_brick_slab"
+    },
+    "type=double": {
+      "model": "inland_port:block/stromatolite_bricks"
+    },
+    "type=top": {
+      "model": "inland_port:block/stromatolite_brick_slab_top"
+    }
+  }
+}

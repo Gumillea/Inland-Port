@@ -1,0 +1,41 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:not",
+      "value": {
+        "type": "neoforge:tag_empty",
+        "tag": "inland_port:gumillea_logs"
+      }
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gumillea_logs": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#inland_port:gumillea_logs"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "inland_port:shapeless/gumillea_planks"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gumillea_logs"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "inland_port:shapeless/gumillea_planks"
+    ]
+  }
+}
