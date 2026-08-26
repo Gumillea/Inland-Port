@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "inland_port:block/gumillea_log",
-    "side": "inland_port:block/gumillea_log"
-  }
-}

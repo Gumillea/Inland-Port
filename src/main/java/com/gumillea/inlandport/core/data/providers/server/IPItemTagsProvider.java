@@ -1,7 +1,7 @@
 package com.gumillea.inlandport.core.data.providers.server;
 
 import com.gumillea.inlandport.common.block.family.wooden.WoodenBaseBlock;
-import com.gumillea.inlandport.core.data.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

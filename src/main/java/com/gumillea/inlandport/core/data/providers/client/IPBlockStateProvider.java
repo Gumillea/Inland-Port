@@ -3,7 +3,7 @@ package com.gumillea.inlandport.core.data.providers.client;
 import com.gumillea.inlandport.InlandPort;
 import com.gumillea.inlandport.common.block.EdibleBlock;
 import com.gumillea.inlandport.common.block.family.wooden.LogBlock;
-import com.gumillea.inlandport.core.data.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;

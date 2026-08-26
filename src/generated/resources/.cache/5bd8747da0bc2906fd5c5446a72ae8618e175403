@@ -1,4 +1,4 @@
-// 1.21.1	2026-07-20T13:58:47.5677611	Global Loot Modifiers : inland_port
+// 1.21.1	2026-08-26T23:54:02.5705867	Global Loot Modifiers : inland_port
 5ce622afb35b2fba10cb5ad5f246341040f466fd data/inland_port/loot_modifiers/add_music_disc_flekkefjord_to_abandoned_mineshaft.json
 ed608de4fc9bbf4ab9811553ed349e11338b277f data/inland_port/loot_table/inject/add_music_disc_flekkefjord_to_abandoned_mineshaft.json
 7049e9098649e1b2d38bf526f7ca68fc6493c393 data/neoforge/loot_modifiers/global_loot_modifiers.json

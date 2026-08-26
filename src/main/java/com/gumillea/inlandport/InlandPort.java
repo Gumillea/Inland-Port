@@ -1,6 +1,7 @@
 package com.gumillea.inlandport;
 
 import com.gumillea.inlandport.core.util.helpers.reg.BlockHelper;
+import com.gumillea.inlandport.core.util.helpers.reg.RegHelper;
 import com.gumillea.inlandport.test.data.modifiers.TestLootTableModifier;
 import com.gumillea.inlandport.test.data.providers.server.*;
 import com.gumillea.inlandport.test.data.providers.client.TestBlockStateProvider;
@@ -18,6 +19,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -39,8 +41,7 @@ public class InlandPort {
         IPAttributes.HELPER.register(bus);
         IPSoundEvents.HELPER.register(bus);
         IPItems.HELPER.register(bus);
-        IPBlocks.HELPER.register(bus);
-        IPCreativeTabs.HELPER.register(bus);
+        IPConditions.CONDITION_CODECS.register(bus);
 
         bus.addListener(this::commonSetup);
         bus.addListener(this::clientSetup);
@@ -53,7 +54,6 @@ public class InlandPort {
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        IPRenderTypes.setRenderTypes();
         BlockHelper.regSheets();
     }
 
@@ -74,9 +74,6 @@ public class InlandPort {
         generator.addProvider(includeServer, new TestDamageTypeTagsProvider(output, provider, helper));
 
         generator.addProvider(event.includeServer(), new TestLootTableModifier(output, provider));
-        generator.addProvider(event.includeServer(), new TestRecipeProvider(output, provider));
-        generator.addProvider(event.includeServer(), new TestDataMapProvider(output, provider));
-        generator.addProvider(event.includeServer(), new TestLootTableProvider(output, provider));
 
         boolean client = event.includeClient();
         generator.addProvider(client, new TestLanguageProvider(output));

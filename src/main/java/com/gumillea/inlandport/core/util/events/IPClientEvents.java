@@ -41,7 +41,7 @@ public class IPClientEvents {
         ItemStack stack = event.getItemStack();
         Item item = stack.getItem();
         List<Component> tooltip = event.getToolTip();
-
+        
         if (RegHelper.isDisabled(stack)) {
             tooltip.add(Component.translatable("tooltip." + InlandPort.MODID + ".disabled").withStyle(ChatFormatting.DARK_GRAY));
             Set<Object> reasons = RegHelper.getReasons(item);

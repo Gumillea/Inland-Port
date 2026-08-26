@@ -32,6 +32,12 @@ public class EventUtil {
         level.getServer().tell(new TickTask(targetTick, task));
     }
 
+    public static void schedule(Level level, Object delay, Runnable task) {
+        if (level instanceof ServerLevel serverLevel) {
+            schedule(serverLevel, delay, task);
+        }
+    }
+
     public static void blockInteract(PlayerInteractEvent.RightClickBlock event, Predicate<BlockState> targetFilter, @Nullable Predicate<ItemStack> itemFilter, @Nullable Holder.Reference<GameEvent> gameEvent, Runnable task) {
         Level level = event.getLevel();
         Player player = event.getEntity();

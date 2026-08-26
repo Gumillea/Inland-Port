@@ -4,7 +4,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
-import java.util.logging.LogManager;
 
 public class InlandPortConfig {
     public static final ModConfigSpec STARTUP_SPEC;
@@ -31,15 +30,15 @@ public class InlandPortConfig {
     }
 
     public static class Startup {
-        public static ModConfigSpec.ConfigValue<List<? extends String>> DISABLED;
+        public static ModConfigSpec.ConfigValue<List<? extends String>> DISABLED_ITEMS;
         public static ModConfigSpec.BooleanValue DISABLE_MODE;
 
         public static ModConfigSpec.DoubleValue GENERIC_EAT_DURATION;
         public static ModConfigSpec.DoubleValue GENERIC_DRINK_DURATION;
 
         Startup(ModConfigSpec.Builder builder) {
-            DISABLED = builder.comment("List of item registry names to disable (e.g. 'cosmopolitan:wildberry')").defineList("disabled", List.of(), Object -> Object instanceof String);
-            DISABLE_MODE = builder.comment("If true, items are hard-disabled (not registered at all). If false, soft-disabled (converted to apple on pickup, kept visible in JEI with tooltip).").define("useHardDisable", true);
+            DISABLED_ITEMS = builder.comment("List of item registry names to disable (e.g. 'cosmopolitan:wildberry')").defineList("disabledItems", List.of(), Object -> Object instanceof String);
+            DISABLE_MODE = builder.comment("If true, items are hard-disabled (not registered at all). If false, soft-disabled (converted to apple on pickup, kept visible in JEI with tooltip).").define("disableMode", true);
 
             GENERIC_EAT_DURATION = builder.comment("Defines the interval in ticks between each Gulime regeneration check").defineInRange("genericEatDuration", 1.6D, 0, Double.MAX_VALUE);
             GENERIC_DRINK_DURATION = builder.comment("Defines the interval in ticks between each Gulime regeneration check").defineInRange("genericDrinkDuration", 2.0D, 0, Double.MAX_VALUE);
@@ -60,9 +59,11 @@ public class InlandPortConfig {
 
     public static class Client {
         public static ModConfigSpec.BooleanValue EFFECT_TOOLTIP;
+        public static ModConfigSpec.BooleanValue DISABLE_OVERLAY;
 
         Client(ModConfigSpec.Builder builder) {
             EFFECT_TOOLTIP = builder.comment("Allows food items to display their mob effects in tooltips.").define("effectTooltip",  true);
+            DISABLE_OVERLAY = builder.comment("Allows food items to display their mob effects in tooltips.").define("disableOverlay",  true);
         }
     }
 }

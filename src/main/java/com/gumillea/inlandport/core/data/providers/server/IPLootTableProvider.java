@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static com.gumillea.inlandport.core.data.AutoDataGeneHelper.autoGeneBlockLoots;
+import static com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper.autoGeneBlockLoots;
 
 public abstract class IPLootTableProvider extends LootTableProvider {
 
@@ -43,7 +43,6 @@ public abstract class IPLootTableProvider extends LootTableProvider {
     public record SubProviderFactory(Function<HolderLookup.Provider, LootTableSubProvider> provider, LootContextParamSet set) {}
 
     public static class IPBlockLoot extends BlockLootSubProvider {
-
         public final String modId;
         private final Set<Block> blocks = new HashSet<>();
         private boolean isAutoGenerating = false;

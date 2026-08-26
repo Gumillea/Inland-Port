@@ -1,32 +1,64 @@
 package com.gumillea.inlandport.core.util.events;
 
 import com.gumillea.inlandport.InlandPort;
+import com.gumillea.inlandport.core.util.helpers.reg.CreativeTabHelper;
+import com.gumillea.inlandport.core.util.helpers.reg.RegHelper;
 import com.gumillea.inlandport.core.util.tags.IPDamageTypeTags;
 import com.gumillea.inlandport.core.util.utils.*;
 import com.gumillea.inlandport.test.reg.IPAttributes;
 import com.gumillea.inlandport.test.reg.IPSoundEvents;
 import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeModificationEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 
 @EventBusSubscriber(modid = InlandPort.MODID)
 public class IPEvents {
+
+    @SubscribeEvent
+    public static void onContainerOpen(PlayerContainerEvent.Open event) {
+        if (RegHelper.isHardMode()) return;
+        if (event.getEntity().level().isClientSide()) return;
+
+        var container = event.getContainer();
+        for (int i = 0; i < container.slots.size(); i++) {
+            var slot = container.getSlot(i);
+            ItemStack stack = slot.getItem();
+
+            if (!stack.isEmpty() && RegHelper.isDisabled(stack)) {
+                slot.set(RegUtil.stack(Items.APPLE, stack.getCount()));
+                slot.setChanged();
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onItemPickup(ItemEntityPickupEvent.Pre event) {
+        if (RegHelper.isHardMode()) return;
+        if (event.getPlayer().level().isClientSide()) return;
+
+        ItemEntity entity = event.getItemEntity();
+        ItemStack stack = entity.getItem();
+
+        if (RegHelper.isDisabled(stack)) {
+            entity.setItem(RegUtil.stack(Items.APPLE, stack.getCount()));
+        }
+    }
 
     @SubscribeEvent
     public static void addAttributes(EntityAttributeModificationEvent event) {
@@ -72,21 +104,19 @@ public class IPEvents {
         int duration = inst.getDuration();
 
         if (EffectUtil.isHarmful(effect) && !EffectUtil.isInfinite(inst) && AttrUtil.has(living, IPAttributes.DEBUFF_RESISTANCE)) {
-            if (level instanceof ServerLevel serverLevel) {
-                double dr = IPAttributes.getDebuffResistance(living);
-                EventUtil.schedule(serverLevel, 1, () -> {
-                    if (living.isAlive()) {
-                        if (dr >= 1) {
-                            if (!level.isClientSide()) {
-                                EntityUtil.playSound(living, IPSoundEvents.DEBUFF_IMMUNE);
-                            }
-                            living.removeEffect(effect);
-                        } else {
-                            EffectUtil.adjustDuration(living, inst, (int) -(duration * (IPAttributes.getDebuffResistance(living))));
+            double dr = IPAttributes.getDebuffResistance(living);
+            EventUtil.schedule(level, 1, () -> {
+                if (living.isAlive()) {
+                    if (dr >= 1) {
+                        if (!level.isClientSide()) {
+                            EntityUtil.playSound(living, IPSoundEvents.DEBUFF_IMMUNE);
                         }
+                        living.removeEffect(effect);
+                    } else {
+                        EffectUtil.adjustDuration(living, inst, (int) -(duration * (IPAttributes.getDebuffResistance(living))));
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -111,11 +141,8 @@ public class IPEvents {
     }
 
     @SubscribeEvent
-    public static void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
-        Entity target = event.getTarget();
-        EventUtil.entityInteract(event, e -> e instanceof Cat, i -> i.is(Items.APPLE), () -> {
-            EffectUtil.add(target, MobEffects.WEAKNESS, 100);
-        });
+    public static void buildCreativeTab(BuildCreativeModeTabContentsEvent event) {
+        CreativeTabHelper.autoInsert(event, InlandPort.MODID);
     }
 
 }

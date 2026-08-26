@@ -6,7 +6,8 @@ import com.gumillea.inlandport.common.block.family.SimpleBaseBlock;
 import com.gumillea.inlandport.common.block.family.Variant;
 import com.gumillea.inlandport.common.block.family.stone.StoneBaseBlock;
 import com.gumillea.inlandport.common.block.family.wooden.WoodenBaseBlock;
-import com.gumillea.inlandport.core.data.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.api.NotDisabledCondition;
+import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.IPCompat;
 import com.gumillea.inlandport.core.util.tags.IPItemTags;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
@@ -495,7 +496,10 @@ public abstract class IPRecipeProvider extends RecipeProvider {
             switch (object) {
                 case ItemLike item -> {
                     itemUnlocks.add(item);
-                    if (!RegUtil.isVanilla(RegUtil.key(item))) conditions.add(new ItemExistsCondition(RegUtil.key(item.asItem())));
+                    if (!RegUtil.isVanilla(RegUtil.key(item))) {
+                        conditions.add(new ItemExistsCondition(RegUtil.key(item.asItem())));
+                        conditions.add(new NotDisabledCondition(RegUtil.key(item.asItem())));
+                    }
                 }
                 case TagKey<?> tagKey -> {
                     TagKey<Item> tag = (TagKey<Item>) tagKey;
@@ -508,7 +512,10 @@ public abstract class IPRecipeProvider extends RecipeProvider {
                             case Ingredient.ItemValue(ItemStack item) -> {
                                 ItemLike itemm = item.getItem();
                                 itemUnlocks.add(itemm);
-                                if (!RegUtil.isVanilla(RegUtil.key(itemm))) conditions.add(new ItemExistsCondition(RegUtil.key(itemm.asItem())));
+                                if (!RegUtil.isVanilla(RegUtil.key(itemm))) {
+                                    conditions.add(new ItemExistsCondition(RegUtil.key(itemm.asItem())));
+                                    conditions.add(new NotDisabledCondition(RegUtil.key(itemm.asItem())));
+                                }
                             }
                             case Ingredient.TagValue(TagKey<Item> tag) -> {
                                 tagUnlocks.add(tag);
@@ -521,6 +528,8 @@ public abstract class IPRecipeProvider extends RecipeProvider {
                 default -> {}
             }
         }
+
+        conditions.add(new NotDisabledCondition(RegUtil.key(result.asItem())));
 
         consumer.accept(builder);
 
@@ -594,9 +603,9 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         List<Object> objects = new ArrayList<>();
 
         for (String row : pattern) {
-            for (char symbol : row.toCharArray()) {
-                if (symbol == ' ') continue;
-                objects.add(map.get(symbol));
+            for (char c : row.toCharArray()) {
+                if (c == ' ') continue;
+                objects.add(map.get(c));
             }
         }
         return objects.toArray();

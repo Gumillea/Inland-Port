@@ -111,8 +111,12 @@ public class RegUtil {
         return item instanceof BlockItem;
     }
 
+    public static ItemStack stack(Item item, int count) {
+        return new ItemStack(item, count);
+    }
+
     public static ItemStack stack(Item item) {
-        return new ItemStack(item);
+        return stack(item, 1);
     }
 
 }

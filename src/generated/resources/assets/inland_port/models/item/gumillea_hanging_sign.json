@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "inland_port:item/gumillea_hanging_sign"
-  }
-}

@@ -2,7 +2,7 @@ package com.gumillea.inlandport.core.data.providers.client;
 
 import com.gumillea.inlandport.common.effect.SimpleMobEffect;
 import com.gumillea.inlandport.common.item.TooltipItem;
-import com.gumillea.inlandport.core.data.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;

@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "bottom": "inland_port:block/ansault_crate_bottom",
-    "side": "inland_port:block/ansault_crate_side",
-    "top": "inland_port:block/ansault_crate_top"
-  }
-}

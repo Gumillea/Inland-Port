@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "inland_port:block/stromatolite",
-    "side": "inland_port:block/stromatolite",
-    "top": "inland_port:block/stromatolite"
-  }
-}

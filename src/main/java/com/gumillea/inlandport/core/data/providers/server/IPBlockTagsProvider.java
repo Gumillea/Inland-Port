@@ -3,7 +3,7 @@ package com.gumillea.inlandport.core.data.providers.server;
 import com.gumillea.inlandport.common.block.family.Variant;
 import com.gumillea.inlandport.common.block.family.stone.StoneBaseBlock;
 import com.gumillea.inlandport.common.block.family.wooden.WoodenBaseBlock;
-import com.gumillea.inlandport.core.data.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;

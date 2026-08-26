@@ -24,14 +24,17 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class IPBoatItem extends Item {
-
     private final ResourceLocation type;
-    public final boolean hasChest;
+    private final boolean hasChest;
 
     public IPBoatItem(boolean hasChest, ResourceLocation type, Properties properties) {
         super(properties);
         this.type = type;
         this.hasChest = hasChest;
+    }
+
+    public boolean isHasChest() {
+        return hasChest;
     }
 
     @Override

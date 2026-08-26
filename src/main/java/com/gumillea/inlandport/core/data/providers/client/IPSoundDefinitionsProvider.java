@@ -1,6 +1,6 @@
 package com.gumillea.inlandport.core.data.providers.client;
 
-import com.gumillea.inlandport.core.data.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.data.PackOutput;
 import net.minecraft.sounds.SoundEvent;

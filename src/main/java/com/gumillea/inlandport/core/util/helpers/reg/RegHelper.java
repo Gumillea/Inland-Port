@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class RegHelper {
-    private static final Map<ResourceLocation, Set<Object>> DISABLED = new HashMap<>();
+    private static final Map<ResourceLocation, Set<Object>> DISABLED = getMap();
 
     public static boolean isSoftMode(){
         return InlandPortConfig.Startup.DISABLE_MODE.get();
@@ -67,5 +67,19 @@ public class RegHelper {
         }
 
         return reg.register(name, supplier);
+    }
+
+    private static Map<ResourceLocation, Set<Object>> getMap() {
+        Map<ResourceLocation, Set<Object>> map = new HashMap<>();
+        List<? extends String> configList = InlandPortConfig.Startup.DISABLED_ITEMS.get();
+
+        for (String id : configList) {
+            ResourceLocation loc = ResourceLocation.tryParse(id);
+            if (loc != null) {
+                map.put(loc, Collections.emptySet());
+            }
+        }
+
+        return map;
     }
 }

@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cube_column",
-  "textures": {
-    "end": "inland_port:block/stripped_gumillea_log_top",
-    "side": "inland_port:block/stripped_gumillea_log"
-  }
-}

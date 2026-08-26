@@ -1,10 +1,2 @@
-// 1.21.1	2026-08-24T11:01:51.3651046	Item Models: inland_port
-3553eb1b0eebe5544f77efc5b749d1db136938e8 assets/inland_port/models/item/ansault.json
-b67bb6deafc917b9fab037c73b6fb52a16bc2dfb assets/inland_port/models/item/ansault_pie.json
-def23d4404b0174f59c635553c17a706dc21bf73 assets/inland_port/models/item/ansault_pie_slice.json
-7f46745b2f2051e435f13005a22cacd521b85c8f assets/inland_port/models/item/gumillea_boat.json
-bb3fe745365213d5ee9422400eefbdc946cc5f26 assets/inland_port/models/item/gumillea_chest_boat.json
-612d6a81bcfbe9bbe82e3d50dfd47cec4c82a8ba assets/inland_port/models/item/gumillea_door.json
-e0c034cac827ed7dbda5328638621ec344044b2c assets/inland_port/models/item/gumillea_hanging_sign.json
-1f301ebce2ed992d3adc0b5f389111ec57b776e4 assets/inland_port/models/item/gumillea_sign.json
+// 1.21.1	2026-08-26T23:54:02.5737899	Item Models: inland_port
 58240e15e14f7693b1d21754f3580449fded3cbe assets/inland_port/models/item/music_disc_flekkefjord.json

@@ -1,9 +1,0 @@
-{
-  "parent": "minecraft:block/honey_block",
-  "textures": {
-    "down": "inland_port:block/slug_husk",
-    "particle": "inland_port:block/slug_husk",
-    "side": "inland_port:block/slug_husk",
-    "up": "inland_port:block/slug_husk"
-  }
-}

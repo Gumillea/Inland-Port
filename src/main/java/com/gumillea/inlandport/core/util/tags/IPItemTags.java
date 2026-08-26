@@ -14,7 +14,6 @@ public class IPItemTags {
     public static final TagKey<Item> POTATO = itemTag("crops/potato");
     public static final TagKey<Item> SUGARCANE = itemTag("crops/sugarcane");
 
-    public static final TagKey<Item> BERRIES = itemTag("berries");
     public static final TagKey<Item> FRUITS = itemTag("fruits");
     public static final TagKey<Item> FRUITS_SOUR = itemTag("fruits/sour");
     public static final TagKey<Item> FRUITS_SWEET = itemTag("fruits/sweet");
