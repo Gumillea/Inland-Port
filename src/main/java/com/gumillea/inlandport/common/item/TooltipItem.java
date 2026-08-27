@@ -2,12 +2,7 @@ package com.gumillea.inlandport.common.item;
 
 import com.gumillea.inlandport.InlandPortConfig;
 import com.gumillea.inlandport.core.api.ITooltipItem;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -16,8 +11,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.UnaryOperator;
 
 public class TooltipItem extends Item implements ITooltipItem {
 
@@ -48,7 +41,7 @@ public class TooltipItem extends Item implements ITooltipItem {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag flag) {
-        if (!InlandPortConfig.Client.EFFECT_TOOLTIP.get()) return;
+        if (!InlandPortConfig.Client.ENABLE_EFFECT_TOOLTIP.get()) return;
         this.appendTooltip(stack, components);
     }
 }

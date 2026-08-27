@@ -88,17 +88,17 @@ public class EdibleBlock extends Block {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult result) {
         Item item = stack.getItem();
 
-        if (this.getType() == CAKE && stack.is(ItemTags.CANDLES) && state.getValue(BITES) == 0) {
-            Block var10 = Block.byItem(item);
-            if (var10 instanceof CandleBlock candleblock) {
-                stack.consume(1, player);
-                level.playSound(null, pos, SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                level.setBlockAndUpdate(pos, CandleCakeBlock.byCandle(candleblock));
-                level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-                player.awardStat(Stats.ITEM_USED.get(item));
-                return ItemInteractionResult.SUCCESS;
-            }
-        }
+//        if (this.getType() == CAKE && stack.is(ItemTags.CANDLES) && state.getValue(BITES) == 0) {
+//            Block var10 = Block.byItem(item);
+//            if (var10 instanceof CandleBlock candleblock) {
+//                stack.consume(1, player);
+//                level.playSound(null, pos, SoundEvents.CAKE_ADD_CANDLE, SoundSource.BLOCKS, 1.0F, 1.0F);
+//                level.setBlockAndUpdate(pos, CandleCakeBlock.byCandle(candleblock));
+//                level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+//                player.awardStat(Stats.ITEM_USED.get(item));
+//                return ItemInteractionResult.SUCCESS;
+//            }
+//        }
 
         if (getSlice() != null && stack.is(IPItemTags.KNIVES)) {
             cut(level, pos, state, player);

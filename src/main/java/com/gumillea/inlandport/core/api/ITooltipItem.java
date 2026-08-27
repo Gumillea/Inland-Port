@@ -21,7 +21,7 @@ public interface ITooltipItem {
     }
 
     default void appendTooltip(ItemStack stack, List<Component> components) {
-        if (!InlandPortConfig.Client.EFFECT_TOOLTIP.get()) return;
+        if (!InlandPortConfig.Client.ENABLE_EFFECT_TOOLTIP.get()) return;
         ClientUtil.addTip(stack, components);
     }
 }

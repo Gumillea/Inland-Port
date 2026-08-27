@@ -1,5 +1,8 @@
 package com.gumillea.inlandport.core.util.helpers.reg;
 
+import com.gumillea.inlandport.common.block.EdibleBlock;
+import com.gumillea.inlandport.common.item.ContainerFoodItem;
+import com.gumillea.inlandport.common.item.EdibleBlockItem;
 import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,6 +18,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -45,12 +50,24 @@ public class CreativeTabHelper {
         return regAutoTab(name, icon, RegHelper::isDisabled);
     }
 
+    public DeferredHolder<CreativeModeTab, CreativeModeTab> regAutoTabWithDisabled(String name, Object icon) {
+        return regAutoTab(name, icon, item -> true);
+    }
+
     public DeferredHolder<CreativeModeTab, CreativeModeTab> regAutoItemTab(String name, Object icon) {
         return regAutoTab(name, icon, item -> RegHelper.isDisabled(item) || RegUtil.isBlock(item));
     }
 
+    public DeferredHolder<CreativeModeTab, CreativeModeTab> regAutoItemTabWithDisabled(String name, Object icon) {
+        return regAutoTab(name, icon, RegUtil::isBlock);
+    }
+
     public DeferredHolder<CreativeModeTab, CreativeModeTab> regAutoBlockTab(String name, Object icon) {
         return regAutoTab(name, icon, item -> RegHelper.isDisabled(item) || !RegUtil.isBlock(item));
+    }
+
+    public DeferredHolder<CreativeModeTab, CreativeModeTab> regAutoBlockTabWithDisabled(String name, Object icon) {
+        return regAutoTab(name, icon, item -> !RegUtil.isBlock(item));
     }
 
     private static ItemStack getIcon(Object icon) {
@@ -67,6 +84,8 @@ public class CreativeTabHelper {
         return RegUtil.stack(Items.APPLE);
     }
 
+    private static final Set<ItemStack> added = new HashSet<>();
+
     public static void autoInsert(BuildCreativeModeTabContentsEvent event, String modId) {
         for (Item item : AutoDataGeneHelper.getItems(modId)) {
             ItemStack stack = RegUtil.stack(item);
@@ -74,23 +93,66 @@ public class CreativeTabHelper {
 
             ResourceKey<CreativeModeTab> tab = event.getTabKey();
             if (tab == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-                if (stack.is(ItemTags.BOATS)) insertAfter(event, Items.CHERRY_CHEST_BOAT, stack);
-                if (stack.is(Tags.Items.MUSIC_DISCS)) insertAfter(event, Items.MUSIC_DISC_PIGSTEP, stack);
+                if (stack.is(ItemTags.BOATS)) insert(event, Items.CHERRY_CHEST_BOAT, stack);
+                if (stack.is(Tags.Items.MUSIC_DISCS)) insert(event, Items.MUSIC_DISC_PIGSTEP, stack);
             }
 
             if (tab == CreativeModeTabs.NATURAL_BLOCKS) {
-                if (stack.is(Tags.Items.SEEDS)) insertAfter(event, Items.PITCHER_POD, stack);
+                if (stack.is(ItemTags.SMALL_FLOWERS)) insert(event, Items.LILY_OF_THE_VALLEY, stack);
+                if (stack.is(ItemTags.TALL_FLOWERS)) insert(event, Items.PEONY, stack);
+                if (stack.is(Tags.Items.SEEDS)) insert(event, Items.BEETROOT_SEEDS, stack);
             }
 
-            if (tab == CreativeModeTabs.NATURAL_BLOCKS) {
-                if (stack.is(Tags.Items.FOODS_VEGETABLE)) insertAfter(event, Items.BEETROOT, stack);
-                if (stack.is(Tags.Items.FOODS_BERRY)) insertAfter(event, Items.GLOW_BERRIES, stack);
+            if (tab == CreativeModeTabs.FOOD_AND_DRINKS) {
+                if (stack.is(ItemTags.MEAT)) insert(event, Items.COOKED_RABBIT, stack);
+                if (stack.is(ItemTags.FISHES)) {
+                    if (stack.is(Tags.Items.FOODS_FOOD_POISONING)) {
+                        insert(event, Items.PUFFERFISH, stack);
+                    } else {
+                        insert(event, Items.TROPICAL_FISH, stack);
+                    }
+                }
+                if (stack.is(Tags.Items.FOODS_FRUIT)) insert(event, Items.MELON_SLICE, stack);
+                if (stack.is(Tags.Items.FOODS_VEGETABLE)) insert(event, Items.BEETROOT, stack);
+                if (stack.is(Tags.Items.FOODS_BERRY)) insert(event, Items.GLOW_BERRIES, stack);
+                if (stack.is(Tags.Items.FOODS_FOOD_POISONING)) insert(event, Items.SPIDER_EYE, stack);
+                if (stack.is(Tags.Items.FOODS_COOKIE)) insert(event, Items.COOKIE, stack);
+                if (stack.is(Tags.Items.DRINKS_MILK)) insert(event, Items.MILK_BUCKET, stack);
+
+                switch (stack.getItem()) {
+                    case EdibleBlockItem edibleBlockItem -> {
+                        EdibleBlock block = (EdibleBlock) edibleBlockItem.getBlock();
+                        if (block.getType() == EdibleBlock.Type.CAKE) insert(event, Items.CAKE, stack);
+                        if (block.getType() == EdibleBlock.Type.PIE) insert(event, Items.PUMPKIN_PIE, stack);
+                    }
+                    case ContainerFoodItem containerFoodItem -> {
+                        Item container = containerFoodItem.getCraftingRemainingItem(stack).getItem();
+                        if (container == Items.BOWL) insert(event, Items.RABBIT_STEW, stack);
+                        if (container == Items.GLASS_BOTTLE) insert(event, Items.HONEY_BOTTLE, stack);
+                    }
+                    default -> {}
+                }
             }
+
+            if (tab == CreativeModeTabs.INGREDIENTS) {
+                if (stack.is(Tags.Items.RAW_MATERIALS)) insert(event, Items.RAW_GOLD, stack);
+                if (stack.is(Tags.Items.GEMS)) insert(event, Items.DIAMOND, stack);
+                if (stack.is(Tags.Items.NUGGETS)) insert(event, Items.GOLD_NUGGET, stack);
+                if (stack.is(Tags.Items.INGOTS)) insert(event, Items.GOLD_INGOT, stack);
+                if (stack.is(Tags.Items.BRICKS)) insert(event, Items.NETHER_BRICK, stack);
+                if (stack.is(Tags.Items.LOOM_PATTERNS)) insert(event, Items.GUSTER_BANNER_PATTERN, stack);
+                if (stack.is(ItemTags.DECORATED_POT_SHERDS)) insert(event, Items.SNORT_POTTERY_SHERD, stack);
+                if (stack.is(ItemTags.TRIM_TEMPLATES)) insert(event, Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE, stack);
+            }
+
+            added.clear();
         }
     }
 
-    private static void insertAfter(BuildCreativeModeTabContentsEvent event, Item target, ItemStack stack) {
+    private static void insert(BuildCreativeModeTabContentsEvent event, Item target, ItemStack stack) {
+        if (added.contains(stack)) return;
         event.insertAfter(target.getDefaultInstance(), stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+        added.add(stack);
     }
 
 }

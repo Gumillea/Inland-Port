@@ -53,7 +53,7 @@ public class ContainerFoodItem extends FoodItem {
     }
 
     private static float defaultDuration() {
-        return InlandPortConfig.Startup.GENERIC_DRINK_DURATION.get().floatValue();
+        return InlandPortConfig.Startup.ENABLE_CONFIGURABLE_GENERIC_EAT_DURATION.get() ? InlandPortConfig.Startup.GENERIC_DRINK_DURATION.get().floatValue() : 2F;
     }
 
     public static float getDefaultDuration() {

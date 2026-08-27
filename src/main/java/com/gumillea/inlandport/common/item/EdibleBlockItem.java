@@ -57,7 +57,7 @@ public class EdibleBlockItem extends BlockItem {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag flag) {
-        if (!InlandPortConfig.Client.EFFECT_TOOLTIP.get()) return;
+        if (!InlandPortConfig.Client.ENABLE_EFFECT_TOOLTIP.get()) return;
 
         int setting = InlandPortConfig.Common.PLACEABLE_FOOD_SETTING.get();
 

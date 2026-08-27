@@ -15,7 +15,7 @@ public abstract class GuiGraphicsMixin {
 
     @Inject(method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V", at = @At("HEAD"))
     private void inlandPort$renderOverlay(Font font, ItemStack stack, int x, int y, String string, CallbackInfo ci) {
-        if (!InlandPortConfig.Client.DISABLE_OVERLAY.get()) return;
+        if (!InlandPortConfig.Client.ENABLE_DISABLE_OVERLAY.get()) return;
         DisabledItemOverlay.render((GuiGraphics) (Object) this, stack, x, y);
     }
 

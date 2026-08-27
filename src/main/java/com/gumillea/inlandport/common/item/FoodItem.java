@@ -33,7 +33,7 @@ public class FoodItem extends TooltipItem {
     }
 
     private static float defaultDuration() {
-        return InlandPortConfig.Startup.GENERIC_EAT_DURATION.get().floatValue();
+        return InlandPortConfig.Startup.ENABLE_CONFIGURABLE_GENERIC_EAT_DURATION.get() ? InlandPortConfig.Startup.GENERIC_EAT_DURATION.get().floatValue() : 1.6F;
     }
 
     public static float getDefaultDuration() {

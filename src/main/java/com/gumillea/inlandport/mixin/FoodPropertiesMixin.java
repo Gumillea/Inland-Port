@@ -18,7 +18,7 @@ public abstract class FoodPropertiesMixin {
 
     @Inject(method = "eatDurationTicks", at = @At("HEAD"), cancellable = true)
     private void inlandPort$setEatDurationTicks(CallbackInfoReturnable<Integer> cir) {
-        if (!InlandPortConfig.Common.ENABLE_CONFIGURABLE_GENERIC_EAT_DURATION.get()) return;
+        if (!InlandPortConfig.Startup.ENABLE_CONFIGURABLE_GENERIC_EAT_DURATION.get()) return;
 
         float config = InlandPortConfig.Startup.GENERIC_EAT_DURATION.get().floatValue();
 

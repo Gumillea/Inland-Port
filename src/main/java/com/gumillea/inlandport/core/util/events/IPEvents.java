@@ -1,6 +1,7 @@
 package com.gumillea.inlandport.core.util.events;
 
 import com.gumillea.inlandport.InlandPort;
+import com.gumillea.inlandport.InlandPortConfig;
 import com.gumillea.inlandport.core.util.helpers.reg.CreativeTabHelper;
 import com.gumillea.inlandport.core.util.helpers.reg.RegHelper;
 import com.gumillea.inlandport.core.util.tags.IPDamageTypeTags;
@@ -62,12 +63,12 @@ public class IPEvents {
 
     @SubscribeEvent
     public static void addAttributes(EntityAttributeModificationEvent event) {
-        event.add(EntityType.PLAYER, IPAttributes.ITEM_USAGE_SPEED);
+        if (InlandPortConfig.Startup.ENABLE_ITEM_USAGE_SPEED.get()) event.add(EntityType.PLAYER, IPAttributes.ITEM_USAGE_SPEED);
 
         event.getTypes().forEach(type -> {
-            event.add(type, IPAttributes.DODGE_CHANCE);
-            event.add(type, IPAttributes.DEBUFF_RESISTANCE);
-            event.add(type, IPAttributes.HEALING_EFFICIENCY);
+            if (InlandPortConfig.Startup.ENABLE_DODGE_CHANCE.get()) event.add(type, IPAttributes.DODGE_CHANCE);
+            if (InlandPortConfig.Startup.ENABLE_DEBUFF_RESISTANCE.get()) event.add(type, IPAttributes.DEBUFF_RESISTANCE);
+            if (InlandPortConfig.Startup.ENABLE_HEALING_EFFICIENCY.get()) event.add(type, IPAttributes.HEALING_EFFICIENCY);
         });
     }
 

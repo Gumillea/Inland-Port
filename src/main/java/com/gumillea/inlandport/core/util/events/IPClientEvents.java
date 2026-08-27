@@ -1,6 +1,7 @@
 package com.gumillea.inlandport.core.util.events;
 
 import com.gumillea.inlandport.InlandPort;
+import com.gumillea.inlandport.InlandPortConfig;
 import com.gumillea.inlandport.common.entity.IPBoat;
 import com.gumillea.inlandport.common.entity.IPBoatRenderer;
 import com.gumillea.inlandport.common.entity.IPChestBoat;
@@ -44,8 +45,10 @@ public class IPClientEvents {
         
         if (RegHelper.isDisabled(stack)) {
             tooltip.add(Component.translatable("tooltip." + InlandPort.MODID + ".disabled").withStyle(ChatFormatting.DARK_GRAY));
-            Set<Object> reasons = RegHelper.getReasons(item);
 
+            if (!InlandPortConfig.Client.ENABLE_DISABLE_REASON_TOOLTIP.get()) return;
+
+            Set<Object> reasons = RegHelper.getReasons(item);
             if (!reasons.isEmpty()) {
                 tooltip.add(CommonComponents.EMPTY);
                 List<Component> items = new ArrayList<>();
