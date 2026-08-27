@@ -7,12 +7,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.neoforged.neoforge.common.BasicItemListing;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.village.VillagerTradesEvent;
+import net.neoforged.neoforge.event.village.WandererTradesEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -90,5 +96,30 @@ public class EventUtil {
         entityInteract(event, targetFilter, null, null, task);
     }
 
+    public static void addTrades(VillagerTradesEvent event, VillagerProfession profession, int level, VillagerTrades.ItemListing... trades) {
+        if (event.getType() == profession) {
+            for (VillagerTrades.ItemListing trade : trades) {
+                event.getTrades().get(level).add(trade);
+            }
+        }
+    }
+
+    public static void addTrades(WandererTradesEvent event, boolean isRare, VillagerTrades.ItemListing... trades) {
+        for (VillagerTrades.ItemListing trade : trades) {
+            if (isRare) {
+                event.getRareTrades().add(trade);
+            } else {
+                event.getGenericTrades().add(trade);
+            }
+        }
+    }
+
+    public static VillagerTrades.ItemListing trade(ItemStack cost, ItemStack stack, int maxTrades, int exp, float priceMult) {
+        return new BasicItemListing(cost, stack, maxTrades, exp, priceMult);
+    }
+
+    public static VillagerTrades.ItemListing trade(int cost, ItemStack stack, int maxTrades, int exp) {
+        return new BasicItemListing(cost, stack, maxTrades, exp);
+    }
 
 }
