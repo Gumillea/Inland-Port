@@ -1,0 +1,14 @@
+{
+  "inland_port.generic.debuff_resistance": "减益抗性",
+  "inland_port.generic.dodge_chance": "闪避率",
+  "inland_port.generic.healing_efficiency": "治疗效率",
+  "inland_port.generic.item_usage_speed": "物品使用速度",
+  "item.inland_port.music_disc_flekkefjord": "音乐唱片",
+  "jukebox_song.inland_port.flekkefjord": "Blear Moon - Flekkefjord",
+  "tooltip.inland_port.disabled": "已禁用",
+  "tooltip.inland_port.items_disabled": "物品禁用：",
+  "tooltip.inland_port.mods_required": "模组缺失：",
+  "tooltip.inland_port.placeable": "可放置",
+  "tooltip.inland_port.placeable_while_sneaking": "潜行时可放置",
+  "tooltip.inland_port.tags_missing": "标签缺失："
+}
