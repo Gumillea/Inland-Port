@@ -45,7 +45,7 @@ public abstract class IPLanguageProvider extends LanguageProvider {
         this.keys.clear();
     }
 
-    public abstract void addManualTranslations();
+    public void addManualTranslations() {}
 
     public void addAdvancement(String path, String title, String description) {
         this.add("advancements." + modId + path + ".title", title);

@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public abstract class IPItemTagsProvider extends ItemTagsProvider {
     private final String modId;
 
-    public IPItemTagsProvider(PackOutput output, String modId, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> lookUp) {
+    public IPItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, String modId, CompletableFuture<TagLookup<Block>> lookUp) {
         super(output, provider, lookUp);
         this.modId = modId;
     }

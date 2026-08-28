@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public abstract class IPDataMapProvider extends DataMapProvider {
     private final String modId;
 
-    public IPDataMapProvider(PackOutput output, String modId, CompletableFuture<HolderLookup.Provider> provider) {
+    public IPDataMapProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, String modId) {
         super(output, provider);
         this.modId = modId;
     }

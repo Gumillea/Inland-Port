@@ -1,16 +1,13 @@
 package com.gumillea.inlandport;
 
+import com.gumillea.inlandport.core.data.providers.AutoDataGenerator;
 import com.gumillea.inlandport.core.util.helpers.reg.BlockHelper;
-import com.gumillea.inlandport.core.util.helpers.reg.RegHelper;
 import com.gumillea.inlandport.test.data.modifiers.TestLootTableModifier;
 import com.gumillea.inlandport.test.data.providers.server.*;
-import com.gumillea.inlandport.test.data.providers.client.TestBlockStateProvider;
-import com.gumillea.inlandport.test.data.providers.client.TestItemModelProvider;
 import com.gumillea.inlandport.test.data.providers.TestRegistrySets;
 import com.gumillea.inlandport.test.reg.*;
 import com.gumillea.inlandport.core.util.modifiers.IPAttributeModifier;
 import com.gumillea.inlandport.test.data.providers.client.TestLanguageProvider;
-import com.gumillea.inlandport.test.data.providers.client.TestSoundDefinitionsProvider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -19,7 +16,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -27,6 +23,8 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.slf4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
+
+import static com.gumillea.inlandport.core.data.providers.AutoDataGenerator.Providers.*;
 
 @Mod(InlandPort.MODID)
 public class InlandPort {
@@ -63,22 +61,22 @@ public class InlandPort {
         CompletableFuture<HolderLookup.Provider> provider = event.getLookupProvider();
         ExistingFileHelper helper = event.getExistingFileHelper();
 
-        boolean includeServer = event.includeServer();
+        boolean server = event.includeServer();
         TestRegistrySets sets = new TestRegistrySets(output, provider);
-        generator.addProvider(includeServer, sets);
+        generator.addProvider(server, sets);
         provider = sets.getRegistryProvider();
 
         TestBlockTagsProvider blockTagsProvider = new TestBlockTagsProvider(output, provider, helper);
-        generator.addProvider(includeServer, blockTagsProvider);
-        generator.addProvider(includeServer, new TestItemTagsProvider(output, provider, blockTagsProvider.contentsGetter()));
-        generator.addProvider(includeServer, new TestDamageTypeTagsProvider(output, provider, helper));
+        generator.addProvider(server, blockTagsProvider);
+        generator.addProvider(server, new TestItemTagsProvider(output, provider, blockTagsProvider.contentsGetter()));
+        generator.addProvider(server, new TestDamageTypeTagsProvider(output, provider, helper));
 
-        generator.addProvider(event.includeServer(), new TestLootTableModifier(output, provider));
+        generator.addProvider(server, new TestLootTableModifier(output, provider));
 
         boolean client = event.includeClient();
         generator.addProvider(client, new TestLanguageProvider(output));
-        generator.addProvider(client, new TestItemModelProvider(output, helper));
-        generator.addProvider(client, new TestBlockStateProvider(output, helper));
-        generator.addProvider(client, new TestSoundDefinitionsProvider(output, helper));
+
+        AutoDataGenerator.add(event, InlandPort.MODID, only(ITEM_MODEL, SOUND_DEFINITION));
     }
+
 }

@@ -34,28 +34,48 @@ public class ItemHelper {
     }
 
     public DeferredHolder<Item, Item> regFood(String name, Item.Properties properties, String tooltip, Object[] styles, Object... conditions) {
-        return reg(name, () -> new FoodItem(properties, SoundEvents.GENERIC_EAT, FoodItem.getDefaultDuration(), tooltip, styles), conditions);
+        Object[] finalStyles = tooltip == null ? null : styles;
+        conditions = tooltip == null ? styles : conditions;
+        return reg(name, () -> new FoodItem(properties, SoundEvents.GENERIC_EAT, FoodItem.getDefaultDuration(), tooltip, finalStyles), conditions);
     }
 
-    public DeferredHolder<Item, Item> regFood(String name, int nutrition, float saturation, String tooltip, Object[] styles, Object... conditions) {
+    public DeferredHolder<Item, Item> regFood(String name, Item.Properties properties, Object... conditions) {
+        return regFood(name, properties, null, conditions);
+    }
+
+    public DeferredHolder<Item, Item> regFood(String name, int nutrition, float saturation, Object... conditions) {
         FoodProperties food = (new FoodProperties.Builder()).nutrition(nutrition).saturationModifier(saturation).build();
-        return regFood(name, new Item.Properties().food(food), tooltip, styles, conditions);
+        return regFood(name, new Item.Properties().food(food), conditions);
     }
 
     public DeferredHolder<Item, Item> regContainerFood(String name, Item.Properties properties, Item container, SoundEvent soundEvent, String tooltip, Object[] styles, Object... conditions) {
-        return reg(name, () -> new ContainerFoodItem(properties.craftRemainder(container), soundEvent, ContainerFoodItem.getDefaultDuration(), tooltip, styles), conditions);
+        Object[] finalStyles = tooltip == null ? null : styles;
+        conditions = tooltip == null ? styles : conditions;
+        return reg(name, () -> new ContainerFoodItem(properties.craftRemainder(container), soundEvent, ContainerFoodItem.getDefaultDuration(), tooltip, finalStyles), conditions);
     }
 
-    public DeferredHolder<Item, Item> regStew(String name, Item.Properties properties, String tooltip, Object[] styles, Object... conditions) {
+    public DeferredHolder<Item, Item> regBowlFood(String name, Item.Properties properties, String tooltip, Object[] styles, Object... conditions) {
         return regContainerFood(name, properties.stacksTo(16), Items.BOWL, SoundEvents.GENERIC_EAT, tooltip, styles, conditions);
+    }
+
+    public DeferredHolder<Item, Item> regBowlFood(String name, Item.Properties properties, Object... conditions) {
+        return regBowlFood(name, properties, null, conditions);
     }
 
     public DeferredHolder<Item, Item> regDrink(String name, Item.Properties properties, String tooltip, Object[] styles, Object... conditions) {
         return regContainerFood(name, properties.stacksTo(16), Items.GLASS_BOTTLE, SoundEvents.GENERIC_DRINK, tooltip, styles, conditions);
     }
 
+    public DeferredHolder<Item, Item> regDrink(String name, Item.Properties properties, Object... conditions) {
+        return regDrink(name, properties, null, conditions);
+    }
+
     public DeferredHolder<Item, Item> regSyrup(String name, Item.Properties properties, String tooltip, Object[] styles, Object... conditions) {
         return regContainerFood(name, properties.stacksTo(16), Items.GLASS_BOTTLE, SoundEvents.HONEY_DRINK, tooltip, styles, conditions);
+    }
+
+    public DeferredHolder<Item, Item> regSyrup(String name, Item.Properties properties, Object... conditions) {
+        return regSyrup(name, properties, null, conditions);
     }
 
     public DeferredHolder<Item, Item> regRecord(String name, Item.Properties properties, Rarity rarity, Object... conditions) {
