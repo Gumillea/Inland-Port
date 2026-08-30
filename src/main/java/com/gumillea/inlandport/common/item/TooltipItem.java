@@ -20,7 +20,7 @@ public class TooltipItem extends Item implements ITooltipItem {
     public TooltipItem(Properties properties, @Nullable String tooltip, @Nullable Object... styles) {
         super(properties);
         this.tooltip = tooltip;
-        this.styles = styles;
+        this.styles = tooltip == null ? null : styles;
     }
 
     @Override

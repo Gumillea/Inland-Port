@@ -1,9 +1,9 @@
-// 1.21.1	2026-08-28T18:11:27.1392897	Tags for minecraft:item mod id vanilla
-f9570db096e701a0b8872dddbb31d8dffea2a204 data/c/tags/item/crops/beetroot.json
-3a6049fdf6a247720cef5ea417a0c9519f707e01 data/c/tags/item/crops/carrot.json
-849f851b30eb74acf2ca9316cd9708544427ecbc data/c/tags/item/crops/potato.json
-f02fc9781e8f0ae33ed3b98cf4f46ba6927c7ff8 data/c/tags/item/crops/sugarcane.json
-b33dde3cf95c3f821d49bc84b8c46f9fd65289e8 data/c/tags/item/fruits/apple.json
-33221392eaadbbebce9b701da69e2f20fd46c490 data/c/tags/item/fruits/glow_berry.json
-65a948972be54d0dc9ce5ee6eb59a29341fd6ec0 data/c/tags/item/fruits/sweet_berry.json
+// 1.21.1	2026-08-30T15:08:01.5852894	Tags for minecraft:item mod id vanilla
+b33dde3cf95c3f821d49bc84b8c46f9fd65289e8 data/c/tags/item/foods/apple.json
+f9570db096e701a0b8872dddbb31d8dffea2a204 data/c/tags/item/foods/beetroot.json
+3a6049fdf6a247720cef5ea417a0c9519f707e01 data/c/tags/item/foods/carrot.json
+33221392eaadbbebce9b701da69e2f20fd46c490 data/c/tags/item/foods/glow_berry.json
+849f851b30eb74acf2ca9316cd9708544427ecbc data/c/tags/item/foods/potato.json
+f02fc9781e8f0ae33ed3b98cf4f46ba6927c7ff8 data/c/tags/item/foods/sugarcane.json
+65a948972be54d0dc9ce5ee6eb59a29341fd6ec0 data/c/tags/item/foods/sweet_berry.json
 0e5e2a9266b3ea6c82ccbf55ca28a4b411bc293b data/c/tags/item/music_discs.json

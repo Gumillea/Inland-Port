@@ -1,6 +1,7 @@
 package com.gumillea.inlandport.common.item;
 
 import com.gumillea.inlandport.InlandPortConfig;
+import com.gumillea.inlandport.common.block.EdibleBlock;
 import com.gumillea.inlandport.core.util.utils.ClientUtil;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import net.minecraft.network.chat.Component;
@@ -17,11 +18,17 @@ import java.util.List;
 public class FoodItem extends TooltipItem {
     public final SoundEvent sound;
     public final Object duration;
+    public final Type type;
 
-    public FoodItem(Properties properties, SoundEvent sound, Object duration, @Nullable String tooltip, @Nullable Object... styles) {
+    public FoodItem(Properties properties, SoundEvent sound, Object duration, Type type, @Nullable String tooltip, @Nullable Object... styles) {
         super(properties, tooltip, styles);
         this.sound = sound;
         this.duration = duration;
+        this.type = type;
+    }
+
+    public FoodItem.Type getType() {
+        return type;
     }
 
     public int getUseDuration(ItemStack stack, LivingEntity living) {
@@ -45,6 +52,33 @@ public class FoodItem extends TooltipItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> components, TooltipFlag flag) {
         super.appendHoverText(stack, context, components, flag);
         ClientUtil.addEffectTip(stack, components::add);
+    }
+
+    public enum Type {
+        VEGETABLE,
+        GRAIN,
+
+        RAW_MEAT,
+        COOKED_MEAT,
+
+        RAW_FISH,
+        COOKED_FISH,
+
+        FRUIT,
+        BERRY,
+
+        COOKIE,
+        BREAD,
+        DESSERT,
+
+        MEAL,
+        SOUP,
+        DRINK,
+        SYRUP,
+
+        GOLDEN,
+        SUPER_APPLE,
+        MISC
     }
 
 }

@@ -29,7 +29,8 @@ public class ClientUtil {
         if (item instanceof ITooltipItem tooltipItem && tooltipItem.hasTooltip()) {
             ResourceLocation key = RegUtil.key(item);
             Object[] styles = tooltipItem.getStyles();
-            MutableComponent component = Component.translatable("tooltip." + key.getNamespace() + "." + key.getPath());
+            String tooltip = tooltipItem.getTooltip();
+            MutableComponent component = tooltip.startsWith("tooltip.") ? Component.translatable(tooltip) : Component.translatable("tooltip." + key.getNamespace() + "." + key.getPath());
             if (styles != null) {
                 for (Object style : styles) {
                     switch (style) {

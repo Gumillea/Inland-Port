@@ -42,7 +42,6 @@ public class InlandPortConfig {
         public static ModConfigSpec.BooleanValue ENABLE_HEALING_EFFICIENCY;
         public static ModConfigSpec.BooleanValue ENABLE_ITEM_USAGE_SPEED;
 
-
         Startup(ModConfigSpec.Builder builder) {
             builder.push("Disabling");
             DISABLED_ITEMS = builder.comment("List of item registry names to disable (e.g. 'cosmopolitan:wildberry')").defineList("disabledItems", List.of(), Object -> Object instanceof String);

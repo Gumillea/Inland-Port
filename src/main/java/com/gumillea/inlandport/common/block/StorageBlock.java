@@ -1,7 +1,6 @@
 package com.gumillea.inlandport.common.block;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 
 import java.util.function.Supplier;

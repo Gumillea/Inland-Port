@@ -1,6 +1,7 @@
 package com.gumillea.inlandport.core.util.helpers.reg;
 
 import com.gumillea.inlandport.InlandPortConfig;
+import com.gumillea.inlandport.core.api.records.RegConditions;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -46,11 +48,13 @@ public class RegHelper {
         return DISABLED.get(RegUtil.key(item));
     }
 
-    public static <R, T extends R> DeferredHolder<R, T> reg(DeferredRegister<R> reg, String name, Supplier<T> supplier, Object... conditions) {
+    public static <R, T extends R> DeferredHolder<R, T> reg(DeferredRegister<R> reg, String name, Supplier<T> supplier, @Nullable Supplier<T> altSupplier, @Nullable RegConditions regConditions) {
+        if (regConditions == null) return reg.register(name, supplier);
+
         ResourceLocation location = IPUtil.loc(reg.getNamespace(), name);
         Set<Object> absent = new HashSet<>();
 
-        for (Object condition : conditions) {
+        for (Object condition : regConditions.objects()) {
             if (condition instanceof Boolean b && !b) {
                 DISABLED.put(location, Collections.emptySet());
                 break;
@@ -62,8 +66,12 @@ public class RegHelper {
 
         if (!absent.isEmpty()) DISABLED.put(location, absent);
 
-        if (isDisabled(location) && isHardMode()) {
-            return null;
+        if (isDisabled(location)) {
+            if (isHardMode()) {
+                return null;
+            } else if (altSupplier != null) {
+                supplier = altSupplier;
+            }
         }
 
         return reg.register(name, supplier);
@@ -82,4 +90,5 @@ public class RegHelper {
 
         return map;
     }
+
 }

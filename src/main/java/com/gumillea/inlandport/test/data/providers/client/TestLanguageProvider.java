@@ -2,6 +2,7 @@ package com.gumillea.inlandport.test.data.providers.client;
 
 import com.gumillea.inlandport.InlandPort;
 import com.gumillea.inlandport.core.data.providers.client.IPLanguageProvider;
+import com.gumillea.inlandport.core.util.tags.IPItemTags;
 import com.gumillea.inlandport.test.reg.IPItems;
 import net.minecraft.data.PackOutput;
 
@@ -14,12 +15,23 @@ public class TestLanguageProvider extends IPLanguageProvider {
     @Override
     public void addManualTranslations() {
         this.addJukeboxSong(IPItems.MUSIC_DISC_FLEKKEFJORD, "Blear Moon - Flekkefjord");
+
         this.addTooltip("disabled", "DISABLED");
         this.addTooltip("items_disabled", "Items Disabled: ");
         this.addTooltip("mods_required", "Mods Required: ");
         this.addTooltip("tags_missing", "Tags Missing: ");
         this.addTooltip("placeable", "Placeable");
         this.addTooltip("placeable_while_sneaking", "Placeable while sneaking");
+
+        this.addItemTag(IPItemTags.APPLE, "Apples");
+        this.addItemTag(IPItemTags.BEETROOT, "Beetroots");
+        this.addItemTag(IPItemTags.CARROT, "Carrots");
+        this.addItemTag(IPItemTags.POTATO, "Potatoes");
+        this.addItemTag(IPItemTags.SUGARCANE, "Sugar Canes");
+        this.addItemTag(IPItemTags.SWEET_BERRY, "Sweet Berries");
+        this.addItemTag(IPItemTags.GLOW_BERRY, "Glow Berries");
+        this.addItemTag(IPItemTags.GRAIN, "Grains");
+        this.addItemTag(IPItemTags.NUT, "Nuts");
     }
 
 }

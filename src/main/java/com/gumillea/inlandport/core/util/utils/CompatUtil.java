@@ -116,6 +116,18 @@ public class CompatUtil {
         return isEmpty(BuiltInRegistries.ITEM, tagKey);
     }
 
+    public static <T> boolean isEmptyExcept(Registry<T> registry, TagKey<T> tagKey, T exclude) {
+        return registry.getTag(tagKey).map(tag -> tag.stream().allMatch(holder -> holder.value() == exclude)).orElse(true);
+    }
+
+    public static boolean isBlockTagEmptyExcept(TagKey<Block> tagKey, Block block) {
+        return isEmptyExcept(BuiltInRegistries.BLOCK, tagKey, block);
+    }
+
+    public static boolean isItemTagEmptyExcept(TagKey<Item> tagKey, Item item) {
+        return isEmptyExcept(BuiltInRegistries.ITEM, tagKey, item);
+    }
+
     public static boolean isPresent(ResourceLocation location) {
         return Minecraft.getInstance().getResourceManager().getResource(location).isPresent();
     }

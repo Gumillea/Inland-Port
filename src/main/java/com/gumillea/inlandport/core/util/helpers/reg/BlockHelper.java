@@ -9,6 +9,7 @@ import com.gumillea.inlandport.common.entity.IPBoat;
 import com.gumillea.inlandport.common.entity.IPChestBoat;
 import com.gumillea.inlandport.common.item.EdibleBlockItem;
 import com.gumillea.inlandport.common.item.IPBoatItem;
+import com.gumillea.inlandport.core.api.records.RegConditions;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
@@ -61,28 +62,27 @@ public class BlockHelper {
         entityReg.register(bus);
     }
 
-    public <T extends Block> DeferredHolder<Block, T> regWithoutItem(String name, Supplier<T> supplier, Object... conditions) {
-        return RegHelper.reg(blockReg, name, supplier, conditions);
+    public <T extends Block> DeferredHolder<Block, T> regWithoutItem(String name, Supplier<T> supplier, RegConditions conditions) {
+        return RegHelper.reg(blockReg, name, supplier, null, conditions);
     }
 
-    public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier, Object... conditions) {
-        DeferredHolder<Block, T> block = RegHelper.reg(blockReg, name, supplier, conditions);
-
-        if (block != null) itemReg.register(name, () -> new BlockItem(block.value(), new Item.Properties()));
+    public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier, RegConditions conditions) {
+        DeferredHolder<Block, T> block = RegHelper.reg(blockReg, name, supplier, null, conditions);
+        if (block != null) RegHelper.reg(itemReg, name, () -> new BlockItem(block.value(), new Item.Properties()), () -> new Item(new Item.Properties()), conditions);
         return block;
     }
 
-    public DeferredHolder<Block, Block> regPlaceableFood(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, EdibleBlock.Type type, Supplier<Item> slice, int maxBites, Object... conditions) {
+    public DeferredHolder<Block, Block> regPlaceableFood(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, EdibleBlock.Type type, Supplier<Item> slice, int maxBites, RegConditions conditions) {
         DeferredHolder<Block, Block> block = regWithoutItem(name, () -> new EdibleBlock(blockProps, type, slice, maxBites), conditions);
         if (block != null) itemReg.register(name, () -> new EdibleBlockItem(block.value(), itemProps));
         return block;
     }
 
-    public DeferredHolder<Block, Block> regCake(String name, BlockBehaviour.Properties blockProps, Supplier<Item> slice, Object... conditions) {
+    public DeferredHolder<Block, Block> regCake(String name, BlockBehaviour.Properties blockProps, Supplier<Item> slice, RegConditions conditions) {
         return regPlaceableFood(name, blockProps, new Item.Properties().stacksTo(1), EdibleBlock.Type.CAKE, slice, 8, conditions);
     }
 
-    public DeferredHolder<Block, Block> regPie(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, Supplier<Item> slice, Object... conditions) {
+    public DeferredHolder<Block, Block> regPie(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, Supplier<Item> slice, RegConditions conditions) {
         return regPlaceableFood(name, blockProps, itemProps, EdibleBlock.Type.PIE, slice, 4, conditions);
     }
 
@@ -126,7 +126,7 @@ public class BlockHelper {
         itemReg.register(name, () -> new HangingSignItem(sign.first.get(), sign.second.get(), new Item.Properties()));
     }
 
-    public <V extends Enum<V>, B extends Block> DeferredHolder<Block, B> regFamily(String name, BiFunction<BlockBehaviour.Properties, String, B> reg, EnumSet<V> variants, Map<V, BiFunction<DeferredHolder<Block, B>, BlockBehaviour.Properties, Block>> regMap, BlockBehaviour.Properties properties, BiFunction<V, String, String> regName, Object... conditions) {
+    public <V extends Enum<V>, B extends Block> DeferredHolder<Block, B> regFamily(String name, BiFunction<BlockBehaviour.Properties, String, B> reg, EnumSet<V> variants, Map<V, BiFunction<DeferredHolder<Block, B>, BlockBehaviour.Properties, Block>> regMap, BlockBehaviour.Properties properties, BiFunction<V, String, String> regName, RegConditions conditions) {
         DeferredHolder<Block, B> baseBlock = reg(name, () -> reg.apply(properties, name), conditions);
 
         if (baseBlock != null) {
@@ -153,7 +153,7 @@ public class BlockHelper {
                             }
                             default -> {
                                 if (v != Variant.WALL_SIGN && v != Variant.HANGING_WALL_SIGN) {
-                                    reg(variantName, () -> factory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())));
+                                    reg(variantName, () -> factory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())), conditions);
                                 }
                             }
                         }
@@ -164,27 +164,27 @@ public class BlockHelper {
         return baseBlock;
     }
 
-    public DeferredHolder<Block, Block> regSimpleFamily(String name, BlockBehaviour.Properties properties, EnumSet<Variant> variants, Object... conditions) {
+    public DeferredHolder<Block, Block> regSimpleFamily(String name, BlockBehaviour.Properties properties, EnumSet<Variant> variants, RegConditions conditions) {
         return regFamily(name, (props, n) -> new SimpleBaseBlock(props, this.blockReg.getNamespace(), n), variants, SimpleBaseBlock.REG_MAP, properties, (variant, baseName) -> variant.getPrefix() + baseName + variant.getSuffix(), conditions);
     }
 
-    public DeferredHolder<Block, Block> regSimpleFamily(String name, BlockBehaviour.Properties properties, Object... conditions) {
+    public DeferredHolder<Block, Block> regSimpleFamily(String name, BlockBehaviour.Properties properties, RegConditions conditions) {
         return regSimpleFamily(name, properties, Variant.all(), conditions);
     }
 
-    public DeferredHolder<Block, Block> regStoneFamily(String name, BlockBehaviour.Properties properties, EnumSet<Variant> variants, Object... conditions) {
+    public DeferredHolder<Block, Block> regStoneFamily(String name, BlockBehaviour.Properties properties, EnumSet<Variant> variants, RegConditions conditions) {
         return regFamily(name, (props, n) -> new StoneBaseBlock(props, this.blockReg.getNamespace(), n), variants, StoneBaseBlock.REG_MAP, properties, (variant, baseName) -> variant.getPrefix() + baseName + variant.getSuffix(), conditions);
     }
 
-    public DeferredHolder<Block, Block> regStoneFamily(String name, BlockBehaviour.Properties properties, Object... conditions) {
+    public DeferredHolder<Block, Block> regStoneFamily(String name, BlockBehaviour.Properties properties, RegConditions conditions) {
         return regStoneFamily(name, properties, Variant.all(), conditions);
     }
 
-    public DeferredHolder<Block, Block> regWoodFamily(String name, BlockBehaviour.Properties properties, EnumSet<Variant> variants, Object... conditions) {
+    public DeferredHolder<Block, Block> regWoodFamily(String name, BlockBehaviour.Properties properties, EnumSet<Variant> variants, RegConditions conditions) {
         return regFamily(name + "_planks", (props, n) -> new WoodenBaseBlock(props, this.blockReg.getNamespace(), n), variants, WoodenBaseBlock.REG_MAP, properties, (variant, baseName) -> variant.getPrefix() + baseName + variant.getSuffix(), conditions);
     }
 
-    public DeferredHolder<Block, Block> regWoodFamily(String name, BlockBehaviour.Properties properties, Object... conditions) {
+    public DeferredHolder<Block, Block> regWoodFamily(String name, BlockBehaviour.Properties properties, RegConditions conditions) {
         return regWoodFamily(name, properties, Variant.all(), conditions);
     }
 

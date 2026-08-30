@@ -1,6 +1,7 @@
 package com.gumillea.inlandport.common.item;
 
 import com.gumillea.inlandport.InlandPortConfig;
+import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -14,8 +15,8 @@ import javax.annotation.Nullable;
 
 public class ContainerFoodItem extends FoodItem {
 
-    public ContainerFoodItem(Properties properties, SoundEvent sound, float duration, @Nullable String tooltip, @Nullable Object... styles) {
-        super(properties, sound, duration, tooltip, styles);
+    public ContainerFoodItem(Properties properties, SoundEvent sound, float duration, FoodItem.Type type, @Nullable String tooltip, @Nullable Object... styles) {
+        super(properties, sound, duration, type, tooltip, styles);
     }
 
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity living) {
@@ -41,7 +42,7 @@ public class ContainerFoodItem extends FoodItem {
     }
 
     public UseAnim getUseAnimation(ItemStack stack) {
-        return UseAnim.DRINK;
+        return RegUtil.path(sound).contains("eat") ? UseAnim.EAT : UseAnim.DRINK;
     }
 
     public SoundEvent getEatingSound() {

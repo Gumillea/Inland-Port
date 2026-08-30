@@ -31,10 +31,10 @@ public class InlandPort {
     public static final String MODID = "inland_port";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public InlandPort(IEventBus bus, ModContainer modContainer) {
-        modContainer.registerConfig(ModConfig.Type.STARTUP, InlandPortConfig.STARTUP_SPEC);
-        modContainer.registerConfig(ModConfig.Type.COMMON, InlandPortConfig.COMMON_SPEC);
-        modContainer.registerConfig(ModConfig.Type.CLIENT, InlandPortConfig.CLIENT_SPEC);
+    public InlandPort(IEventBus bus, ModContainer container) {
+        container.registerConfig(ModConfig.Type.STARTUP, InlandPortConfig.STARTUP_SPEC);
+        container.registerConfig(ModConfig.Type.COMMON, InlandPortConfig.COMMON_SPEC);
+        container.registerConfig(ModConfig.Type.CLIENT, InlandPortConfig.CLIENT_SPEC);
 
         IPAttributes.HELPER.register(bus);
         IPSoundEvents.HELPER.register(bus);

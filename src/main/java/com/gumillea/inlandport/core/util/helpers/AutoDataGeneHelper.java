@@ -6,6 +6,7 @@ import com.gumillea.inlandport.common.block.StorageBlock;
 import com.gumillea.inlandport.common.block.family.stone.StoneBaseBlock;
 import com.gumillea.inlandport.common.block.family.wooden.LogBlock;
 import com.gumillea.inlandport.common.block.family.wooden.WoodenBaseBlock;
+import com.gumillea.inlandport.common.item.FoodItem;
 import com.gumillea.inlandport.common.item.IPBoatItem;
 import com.gumillea.inlandport.common.item.RecordItem;
 import com.gumillea.inlandport.core.data.providers.client.*;
@@ -13,6 +14,7 @@ import com.gumillea.inlandport.core.data.providers.server.IPBlockTagsProvider;
 import com.gumillea.inlandport.core.data.providers.server.IPDataMapProvider;
 import com.gumillea.inlandport.core.data.providers.server.IPItemTagsProvider;
 import com.gumillea.inlandport.core.data.providers.server.IPLootTableProvider;
+import com.gumillea.inlandport.core.util.tags.IPItemTags;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.core.Registry;
@@ -49,6 +51,7 @@ public class AutoDataGeneHelper {
 
         for (Item item : getItems(modId)) {
             switch (item) {
+                case ItemNameBlockItem ignored -> provider.addItem(item);
                 case BlockItem ignored -> {}
                 case IPBoatItem boat -> {
                    if (boat.isHasChest()) {
@@ -234,6 +237,29 @@ public class AutoDataGeneHelper {
                 case SwordItem ignored -> provider.tag(ItemTags.SWORDS).add(item);
                 case ShovelItem ignored -> provider.tag(ItemTags.SHOVELS).add(item);
                 case RecordItem ignored -> provider.tag(Tags.Items.MUSIC_DISCS).add(item);
+                case FoodItem food -> {
+                    switch (food.getType()) {
+                        case VEGETABLE -> provider.tag(Tags.Items.FOODS_VEGETABLE).add(item);
+                        case GRAIN -> provider.tag(IPItemTags.GRAIN).add(item);
+
+                        case RAW_MEAT -> provider.tag(Tags.Items.FOODS_RAW_MEAT).add(item);
+                        case COOKED_MEAT -> provider.tag(Tags.Items.FOODS_COOKED_MEAT).add(item);
+
+                        case RAW_FISH -> provider.tag(Tags.Items.FOODS_RAW_FISH).add(item);
+                        case COOKED_FISH -> provider.tag(Tags.Items.FOODS_COOKED_FISH).add(item);
+
+                        case FRUIT -> provider.tag(Tags.Items.FOODS_FRUIT).add(item);
+                        case BERRY -> provider.tag(Tags.Items.FOODS_BERRY).add(item);
+
+                        case COOKIE -> provider.tag(Tags.Items.FOODS_COOKIE).add(item);
+                        case BREAD -> provider.tag(Tags.Items.FOODS_BREAD).add(item);
+                        case SOUP -> provider.tag(Tags.Items.FOODS_SOUP).add(item);
+
+                        case GOLDEN -> provider.tag(Tags.Items.FOODS_GOLDEN).add(item);
+
+                        default -> provider.tag(Tags.Items.FOODS).add(item);
+                    }
+                }
                 default -> {
                 }
             }

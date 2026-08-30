@@ -8,6 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.CreativeModeTab;
@@ -135,7 +136,8 @@ public abstract class IPLanguageProvider extends LanguageProvider {
         for (Item item : items){
             this.add(item, format(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item))).replace(" With ", " with ").replace(" De ", " de ").replace(" And ", " and "));
             if (item instanceof TooltipItem tooltipItem && tooltipItem.hasTooltip()) {
-                this.addTooltip(item, tooltipItem.getTooltip());
+                String tooltip = tooltipItem.getTooltip();
+                if (!tooltip.startsWith("tooltip.")) this.addTooltip(item, tooltip);
             }
         }
     }
@@ -188,6 +190,14 @@ public abstract class IPLanguageProvider extends LanguageProvider {
     public void addJukeboxSong(Holder<Item> item, String title) {
         String key = "jukebox_song."+ modId + "." + RegUtil.path(item.value()).replace("music_disc_", "");
         this.add(key, title);
+    }
+
+    public void addItemTag(TagKey<Item> tagKey, String name) {
+        this.add("tag.item." + tagKey.location().toLanguageKey().replace("/", "."), name);
+    }
+
+    public void addBlockTag(TagKey<Block> tagKey, String name) {
+        this.add("tag.block." + tagKey.location().toLanguageKey().replace("/", "."), name);
     }
 
     public static String format(ResourceLocation location) {

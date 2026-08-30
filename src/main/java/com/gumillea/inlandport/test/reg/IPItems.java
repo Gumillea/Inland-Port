@@ -1,10 +1,7 @@
 package com.gumillea.inlandport.test.reg;
 
 import com.gumillea.inlandport.InlandPort;
-import com.gumillea.inlandport.core.util.IPCompat;
 import com.gumillea.inlandport.core.util.helpers.reg.ItemHelper;
-import com.gumillea.inlandport.core.util.tags.IPItemTags;
-import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredHolder;
 

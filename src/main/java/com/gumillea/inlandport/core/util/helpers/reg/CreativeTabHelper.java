@@ -3,11 +3,16 @@ package com.gumillea.inlandport.core.util.helpers.reg;
 import com.gumillea.inlandport.common.block.EdibleBlock;
 import com.gumillea.inlandport.common.item.ContainerFoodItem;
 import com.gumillea.inlandport.common.item.EdibleBlockItem;
+import com.gumillea.inlandport.common.item.FoodItem;
+import com.gumillea.inlandport.core.util.IPCompat;
 import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.util.tags.IPItemTags;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
@@ -89,9 +94,10 @@ public class CreativeTabHelper {
     public static void autoInsert(BuildCreativeModeTabContentsEvent event, String modId) {
         for (Item item : AutoDataGeneHelper.getItems(modId)) {
             ItemStack stack = RegUtil.stack(item);
-            if (RegHelper.isDisabled(stack)) return;
+            if (RegHelper.isDisabled(stack)) continue;
 
             ResourceKey<CreativeModeTab> tab = event.getTabKey();
+
             if (tab == CreativeModeTabs.TOOLS_AND_UTILITIES) {
                 if (stack.is(ItemTags.BOATS)) insert(event, Items.CHERRY_CHEST_BOAT, stack);
                 if (stack.is(Tags.Items.MUSIC_DISCS)) insert(event, Items.MUSIC_DISC_PIGSTEP, stack);
@@ -112,6 +118,7 @@ public class CreativeTabHelper {
                         insert(event, Items.TROPICAL_FISH, stack);
                     }
                 }
+
                 if (stack.is(Tags.Items.FOODS_FRUIT)) insert(event, Items.MELON_SLICE, stack);
                 if (stack.is(Tags.Items.FOODS_VEGETABLE)) insert(event, Items.BEETROOT, stack);
                 if (stack.is(Tags.Items.FOODS_BERRY)) insert(event, Items.GLOW_BERRIES, stack);
@@ -122,13 +129,20 @@ public class CreativeTabHelper {
                 switch (stack.getItem()) {
                     case EdibleBlockItem edibleBlockItem -> {
                         EdibleBlock block = (EdibleBlock) edibleBlockItem.getBlock();
-                        if (block.getType() == EdibleBlock.Type.CAKE) insert(event, Items.CAKE, stack);
-                        if (block.getType() == EdibleBlock.Type.PIE) insert(event, Items.PUMPKIN_PIE, stack);
+                        switch (block.getType()) {
+                            case CAKE -> insert(event, Items.CAKE, stack);
+                            case PIE -> insert(event, Items.PUMPKIN_PIE, stack);
+                        }
                     }
-                    case ContainerFoodItem containerFoodItem -> {
-                        Item container = containerFoodItem.getCraftingRemainingItem(stack).getItem();
-                        if (container == Items.BOWL) insert(event, Items.RABBIT_STEW, stack);
-                        if (container == Items.GLASS_BOTTLE) insert(event, Items.HONEY_BOTTLE, stack);
+                    case FoodItem food -> {
+                        switch (food.getType()) {
+                            case SUPER_APPLE -> insert(event, Items.ENCHANTED_GOLDEN_APPLE, stack);
+                            case DESSERT -> insert(event, Items.PUMPKIN_PIE, stack);
+                            case SOUP -> insert(event, Items.RABBIT_STEW, stack);
+                            case SYRUP -> insertBefore(event, Items.HONEY_BOTTLE, stack);
+                            case DRINK -> insert(event, Items.HONEY_BOTTLE, stack);
+                            default -> insert(event, Items.SPIDER_EYE, stack);
+                        }
                     }
                     default -> {}
                 }
@@ -144,14 +158,19 @@ public class CreativeTabHelper {
                 if (stack.is(ItemTags.DECORATED_POT_SHERDS)) insert(event, Items.SNORT_POTTERY_SHERD, stack);
                 if (stack.is(ItemTags.TRIM_TEMPLATES)) insert(event, Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE, stack);
             }
-
-            added.clear();
         }
+        added.clear();
     }
 
     private static void insert(BuildCreativeModeTabContentsEvent event, Item target, ItemStack stack) {
         if (added.contains(stack)) return;
         event.insertAfter(target.getDefaultInstance(), stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+        added.add(stack);
+    }
+
+    private static void insertBefore(BuildCreativeModeTabContentsEvent event, Item target, ItemStack stack) {
+        if (added.contains(stack)) return;
+        event.insertBefore(target.getDefaultInstance(), stack, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
         added.add(stack);
     }
 
