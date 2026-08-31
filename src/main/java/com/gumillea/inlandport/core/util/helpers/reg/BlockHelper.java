@@ -9,7 +9,7 @@ import com.gumillea.inlandport.common.entity.IPBoat;
 import com.gumillea.inlandport.common.entity.IPChestBoat;
 import com.gumillea.inlandport.common.item.EdibleBlockItem;
 import com.gumillea.inlandport.common.item.IPBoatItem;
-import com.gumillea.inlandport.core.api.records.RegConditions;
+import com.gumillea.inlandport.core.api.record.RegConditions;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
@@ -66,10 +66,18 @@ public class BlockHelper {
         return RegHelper.reg(blockReg, name, supplier, null, conditions);
     }
 
+    public <T extends Block> DeferredHolder<Block, T> regWithoutItem(String name, Supplier<T> supplier) {
+        return regWithoutItem(name, supplier, null);
+    }
+
     public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier, RegConditions conditions) {
         DeferredHolder<Block, T> block = RegHelper.reg(blockReg, name, supplier, null, conditions);
         if (block != null) RegHelper.reg(itemReg, name, () -> new BlockItem(block.value(), new Item.Properties()), () -> new Item(new Item.Properties()), conditions);
         return block;
+    }
+
+    public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier) {
+        return reg(name, supplier, null);
     }
 
     public DeferredHolder<Block, Block> regPlaceableFood(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, EdibleBlock.Type type, Supplier<Item> slice, int maxBites, RegConditions conditions) {
@@ -78,12 +86,40 @@ public class BlockHelper {
         return block;
     }
 
+    public DeferredHolder<Block, Block> regPlaceableFood(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, EdibleBlock.Type type, Supplier<Item> slice, int maxBites) {
+        return regPlaceableFood(name, blockProps, itemProps, type, slice, maxBites, null);
+    }
+
     public DeferredHolder<Block, Block> regCake(String name, BlockBehaviour.Properties blockProps, Supplier<Item> slice, RegConditions conditions) {
         return regPlaceableFood(name, blockProps, new Item.Properties().stacksTo(1), EdibleBlock.Type.CAKE, slice, 8, conditions);
     }
 
+    public DeferredHolder<Block, Block> regCake(String name, BlockBehaviour.Properties blockProps, Supplier<Item> slice) {
+        return regCake(name, blockProps, slice, null);
+    }
+
+    public DeferredHolder<Block, Block> regCake(String name, MapColor color, Supplier<Item> slice, RegConditions conditions) {
+        return regCake(name, BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE).mapColor(color), slice, conditions);
+    }
+
+    public DeferredHolder<Block, Block> regCake(String name, MapColor color, Supplier<Item> slice) {
+        return regCake(name, color, slice, null);
+    }
+
     public DeferredHolder<Block, Block> regPie(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, Supplier<Item> slice, RegConditions conditions) {
         return regPlaceableFood(name, blockProps, itemProps, EdibleBlock.Type.PIE, slice, 4, conditions);
+    }
+
+    public DeferredHolder<Block, Block> regPie(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, Supplier<Item> slice) {
+        return regPie(name, blockProps, itemProps, slice, null);
+    }
+
+    public DeferredHolder<Block, Block> regPie(String name, MapColor color, Item.Properties itemProps, Supplier<Item> slice, RegConditions conditions) {
+        return regPie(name, BlockBehaviour.Properties.ofFullCopy(Blocks.CAKE).mapColor(color), itemProps, slice, conditions);
+    }
+
+    public DeferredHolder<Block, Block> regPie(String name, MapColor color, Item.Properties itemProps, Supplier<Item> slice) {
+        return regPie(name, color, itemProps, slice, null);
     }
 
     public DeferredHolder<EntityType<?>, EntityType<IPBoat>> regBoat(String name) {

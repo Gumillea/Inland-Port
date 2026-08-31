@@ -255,7 +255,7 @@ public class AutoDataGeneHelper {
                         case BREAD -> provider.tag(Tags.Items.FOODS_BREAD).add(item);
                         case SOUP -> provider.tag(Tags.Items.FOODS_SOUP).add(item);
 
-                        case GOLDEN -> provider.tag(Tags.Items.FOODS_GOLDEN).add(item);
+                        case MAGIC -> provider.tag(Tags.Items.FOODS_GOLDEN).add(item);
 
                         default -> provider.tag(Tags.Items.FOODS).add(item);
                     }

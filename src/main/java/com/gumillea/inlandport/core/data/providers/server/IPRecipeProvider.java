@@ -557,7 +557,7 @@ public abstract class IPRecipeProvider extends RecipeProvider {
     }
 
     @SuppressWarnings("unchecked")
-    private Ingredient toIngredient(Object object) {
+    protected Ingredient toIngredient(Object object) {
         switch (object) {
             case Ingredient ingredient -> {
                 return ingredient;
@@ -572,7 +572,7 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         }
     }
 
-    private Object[] handleFDObjects(Object[] fDObjects) {
+    protected Object[] handleFDObjects(Object[] fDObjects) {
         List<Object> objects = new ArrayList<>();
 
         for (Object obj : fDObjects) {
@@ -599,7 +599,7 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         return objects.toArray();
     }
 
-    private Object[] getObjects(String[] pattern, Map<Character, Object> map) {
+    protected Object[] getObjects(String[] pattern, Map<Character, Object> map) {
         List<Object> objects = new ArrayList<>();
 
         for (String row : pattern) {

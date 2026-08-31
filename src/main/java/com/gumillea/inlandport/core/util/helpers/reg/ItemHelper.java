@@ -3,7 +3,7 @@ package com.gumillea.inlandport.core.util.helpers.reg;
 import com.gumillea.inlandport.common.item.ContainerFoodItem;
 import com.gumillea.inlandport.common.item.FoodItem;
 import com.gumillea.inlandport.common.item.RecordItem;
-import com.gumillea.inlandport.core.api.records.RegConditions;
+import com.gumillea.inlandport.core.api.record.RegConditions;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.food.FoodProperties;

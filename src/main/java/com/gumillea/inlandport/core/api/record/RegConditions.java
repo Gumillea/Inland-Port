@@ -1,4 +1,4 @@
-package com.gumillea.inlandport.core.api.records;
+package com.gumillea.inlandport.core.api.record;
 
 import java.util.*;
 

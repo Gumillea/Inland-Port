@@ -1,7 +1,6 @@
 package com.gumillea.inlandport.common.item;
 
 import com.gumillea.inlandport.InlandPortConfig;
-import com.gumillea.inlandport.common.block.EdibleBlock;
 import com.gumillea.inlandport.core.util.utils.ClientUtil;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import net.minecraft.network.chat.Component;
@@ -70,14 +69,17 @@ public class FoodItem extends TooltipItem {
         COOKIE,
         BREAD,
         DESSERT,
+        SLICE,
 
         MEAL,
+        SNACK,
+
         SOUP,
         DRINK,
         SYRUP,
 
-        GOLDEN,
-        SUPER_APPLE,
+        MAGIC,
+        MAGIC_APPLE,
         MISC
     }
 

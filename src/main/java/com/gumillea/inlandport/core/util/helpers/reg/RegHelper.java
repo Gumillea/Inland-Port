@@ -1,7 +1,7 @@
 package com.gumillea.inlandport.core.util.helpers.reg;
 
 import com.gumillea.inlandport.InlandPortConfig;
-import com.gumillea.inlandport.core.api.records.RegConditions;
+import com.gumillea.inlandport.core.api.record.RegConditions;
 import com.gumillea.inlandport.core.util.utils.CompatUtil;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
