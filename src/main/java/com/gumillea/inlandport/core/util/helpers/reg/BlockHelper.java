@@ -82,7 +82,7 @@ public class BlockHelper {
 
     public DeferredHolder<Block, Block> regPlaceableFood(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, EdibleBlock.Type type, Supplier<Item> slice, int maxBites, RegConditions conditions) {
         DeferredHolder<Block, Block> block = regWithoutItem(name, () -> new EdibleBlock(blockProps, type, slice, maxBites), conditions);
-        if (block != null) itemReg.register(name, () -> new EdibleBlockItem(block.value(), itemProps));
+        if (block != null) itemReg.register(name.replace("_pie_block", "_pie"), () -> new EdibleBlockItem(block.value(), itemProps));
         return block;
     }
 

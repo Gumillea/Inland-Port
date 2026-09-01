@@ -212,16 +212,18 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(block);
     }
 
+
     public void edibleBlock(EdibleBlock block) {
-        String texture = "block/" + RegUtil.path(block);
+        String path = RegUtil.path(block);
+        String texture = "block/" + path;
 
         getVariantBuilder(block).forAllStates(state -> {
             int bites = state.getValue(EdibleBlock.BITES);
             Direction facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
             String suffix = bites > 0 && bites < block.getMaxBites() ? "_slice" + bites : "";
-            ResourceLocation parent = block.getType() == EdibleBlock.Type.CAKE ? mcLoc("block/cake") : modLoc("block/pie" + suffix);
+            ResourceLocation parent = block.getType() == EdibleBlock.Type.CAKE ? mcLoc("block/cake") : IPUtil.loc(InlandPort.MODID, "pie" + suffix);
 
-            BlockModelBuilder model = models().withExistingParent("block/" + InlandPort.MODID + suffix, parent)
+            BlockModelBuilder model = models().withExistingParent("block/" + path + suffix, parent)
                     .texture("particle", IPUtil.loc(modId,texture + "_inner"))
                     .texture("top", IPUtil.loc(modId, texture + "_top"))
                     .texture("bottom", IPUtil.loc(modId,texture + "_bottom"))
@@ -236,7 +238,7 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
     }
 
     public void simpleBlockItem(@NotNull Block block) {
-        this.simpleBlockItem(block, new ModelFile.ExistingModelFile(blockTexture(block), this.models().existingFileHelper));
+        this.simpleBlockItem(block, existingModel(blockTexture(block)));
     }
 
     public ItemModelBuilder basicItem(Item item) {
@@ -246,5 +248,18 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
     public ItemModelBuilder basicItem(ResourceLocation item) {
         return itemModels().getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + item.getPath()));
     }
+
+    public ModelFile existingModel(ResourceLocation location) {
+        return new ModelFile.ExistingModelFile(location, models().existingFileHelper);
+    }
+
+    public ModelFile existingModel(String path) {
+        return existingModel(IPUtil.loc(InlandPort.MODID, path));
+    }
+
+    public ResourceLocation loc(String path) {
+        return IPUtil.loc(modId, path);
+    }
+
 
 }
