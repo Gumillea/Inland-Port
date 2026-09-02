@@ -281,23 +281,59 @@ public abstract class IPRecipeProvider extends RecipeProvider {
     }
 
     //Mixed
-    public void pieRecipe(RecipeOutput output, ItemLike result, String[] pattern, Map<Character, Object> map, String... modIds) {
-        shapelessRecipe(output, RecipeCategory.FOOD, result, 1, handleFDObjects(getObjects(pattern, map)), ArrayUtils.addAll(new String[] {no(IPCompat.FD)}, modIds));
-        shapedRecipe(output, RecipeCategory.FOOD, result, 1, pattern, map, ArrayUtils.addAll(new String[] {IPCompat.FD}, modIds));
+    public void stewRecipe(RecipeOutput output, ItemLike result, Object[] objects, @Nullable String... modIds){
+        simpleFDCooking(output, CookingPotRecipeBookTab.MEALS, result, 1, Items.BOWL, objects, modIds);
+    }
+
+    public void pieRecipe(RecipeOutput output, ItemLike result, int count, int fDCount, String[] pattern, Map<Character, Object> map, boolean coexist, String... modIds) {
+        String[] cond = coexist ? modIds : ArrayUtils.addAll(new String[] {no(IPCompat.FD)}, modIds);
+        String[] fDCond = coexist ? modIds : ArrayUtils.addAll(new String[] {IPCompat.FD}, modIds);
+
+        shapelessRecipe(output, RecipeCategory.FOOD, result, count, handleFDObjects(getObjects(pattern, map)), cond);
+        shapedRecipe(output, RecipeCategory.FOOD, result, fDCount, pattern, map, fDCond);
         if (result instanceof EdibleBlock edibleBlock) {
             Item slice = edibleBlock.getSlice().getItem();
             cuttingRecipe(output, slice, 4,1F, edibleBlock, IPItemTags.KNIVES, modIds, null);
-            shapelessRecipe(output, RecipeCategory.FOOD, result, 1, new Object[]{slice, slice, slice, slice},modIds);
+            shapelessRecipe(output, RecipeCategory.FOOD, result, 1, new Object[]{slice, slice, slice, slice}, modIds);
         }
     }
 
-    //FD - Cooking
-    public void simpleFDCooking(RecipeOutput output, CookingPotRecipeBookTab tab, ItemLike result, int count, @Nullable ItemLike container, Object[] objects, String... modIds) {
-        cookingRecipe(output, tab, result, count, 200, 1, container, objects, modIds);
+    public void pieRecipe(RecipeOutput output, ItemLike result, String[] pattern, Map<Character, Object> map, String... modIds) {
+        pieRecipe(output, result, 1, 1, pattern, map, false, modIds);
     }
 
+    public void pieCompatRecipe(RecipeOutput output, ItemLike result, String[] pattern, Map<Character, Object> map, String... modIds) {
+        pieRecipe(output, result, 1, 2, pattern, map, true, modIds);
+    }
+
+    public void doughRecipe(RecipeOutput output, ItemLike result, int count, int fDCount, Object[] objects, boolean coexist, String... modIds) {
+        String[] cond = coexist ? modIds : ArrayUtils.addAll(new String[] {no(IPCompat.FD)}, modIds);
+        String[] fDCond = coexist ? modIds : ArrayUtils.addAll(new String[] {IPCompat.FD}, modIds);
+        Object[] newObjects = ArrayUtils.addAll(new Object[] {IPItemTags.DOUGH}, objects);
+
+        shapelessRecipe(output, RecipeCategory.FOOD, result, count, handleFDObjects(newObjects), cond);
+        shapelessRecipe(output, RecipeCategory.FOOD, result, fDCount, newObjects, fDCond);
+    }
+
+    public void cookieRecipe(RecipeOutput output, ItemLike result, Object[] objects, String... modIds) {
+        doughRecipe(output, result, 8, 8, objects, false, modIds);
+    }
+
+    public void cookieCompatRecipe(RecipeOutput output, ItemLike result, Object[] objects, String... modIds) {
+        doughRecipe(output, result, 8, 10, objects, true, modIds);
+    }
+
+    //FD - Cooking
     public void bowlMealCooking(RecipeOutput output, ItemLike result, int count, Object[] objects, String... modIds) {
         cookingRecipe(output, CookingPotRecipeBookTab.MEALS, result, count, 200, 1, Items.BOWL, objects, modIds);
+    }
+
+    public void simpleFDCooking(RecipeOutput output, CookingPotRecipeBookTab tab, ItemLike result, int count, float seconds, int exp, @Nullable ItemLike container, Object[] objects, String... modIds) {
+        cookingRecipe(output, tab, result, count, IPUtil.secondsToTicks(seconds), exp, container, objects, modIds);
+    }
+
+    public void simpleFDCooking(RecipeOutput output, CookingPotRecipeBookTab tab, ItemLike result, int count, @Nullable ItemLike container, Object[] objects, String... modIds) {
+        simpleFDCooking(output, tab, result, count, 10, 1, container, objects, modIds);
     }
 
     //FD - Cutting
@@ -309,35 +345,47 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         simpleCuttingWithChance(output, result, 0.75F, object, ItemTags.AXES, modIds);
     }
 
-    public void simpleCutting(RecipeOutput output, ItemLike result, Object object, Object tool, String[] modIds) {
+    public void simpleCutting(RecipeOutput output, ItemLike result, Object object, Object tool, String... modIds) {
         cuttingRecipe(output, result, 1,1F, object, tool, modIds, null);
     }
 
-    public void simpleCuttingWithChance(RecipeOutput output, ItemLike result, float chance, Object object, Object tool, String[] modIds) {
+    public void simpleCuttingWithChance(RecipeOutput output, ItemLike result, float chance, Object object, Object tool, String... modIds) {
         cuttingRecipe(output, result, 1, chance, object, tool, modIds, null);
     }
 
     //Smelting
-    public void oreSmeltingRecipe(RecipeOutput output, ItemLike result, float exp, float seconds, Object object, String[] modIds) {
+    public void oreSmeltingRecipe(RecipeOutput output, ItemLike result, float exp, float seconds, Object object, String... modIds) {
         smeltingRecipe(output, RecipeCategory.MISC, result, exp, seconds, object, modIds);
-        blastingRecipe(output, RecipeCategory.MISC, result, exp, seconds / 2, object, modIds);
+        blastingRecipe(output, RecipeCategory.MISC, result, exp, seconds / 2, modIds);
     }
 
-    public void oreSmeltingRecipe(RecipeOutput output, ItemLike result, Object object, String[] modIds) {
+    public void oreSmeltingRecipe(RecipeOutput output, ItemLike result, Object object, String... modIds) {
         oreSmeltingRecipe(output, result, 0.7F, 10, object, modIds);
     }
 
-    public void foodCookingRecipe(RecipeOutput output, ItemLike result, float exp, float seconds, Object object, String[] modIds) {
+    public void foodCookingRecipe(RecipeOutput output, ItemLike result, float exp, float seconds, Object object, String... modIds) {
         smeltingRecipe(output, RecipeCategory.FOOD, result, exp, seconds, object, modIds);
         smokingRecipe(output, RecipeCategory.FOOD, result, exp, seconds / 2, object, modIds);
         campfireCookingRecipe(output, RecipeCategory.FOOD, result, exp, seconds * 3, object, modIds);
     }
 
-    public void foodCookingRecipe(RecipeOutput output, ItemLike result, Object object, String[] modIds) {
+    public void foodCookingRecipe(RecipeOutput output, ItemLike result, Object object, String... modIds) {
         foodCookingRecipe(output, result, 0.35F, 10, object, modIds);
     }
 
     //Shaped
+    public void magicAppleRecipe(RecipeOutput output, ItemLike result, int count, Object ingredient, String... modIds) {
+        magicFoodRecipe(output, result, count, ingredient, Items.APPLE, modIds);
+    }
+
+    public void magicFoodRecipe(RecipeOutput output, ItemLike result, int count, Object ingredient, Object fruit, String... modIds) {
+        enclosedRecipe(output, RecipeCategory.FOOD, result, count, ingredient, fruit, modIds);
+    }
+
+    public void enclosedRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, int count, Object ingredient, Object core, String... modIds) {
+        shapedRecipe(output, category, result, count, new String[]{"###", "#f#", "###"}, Map.of('#', ingredient, 's', core), modIds);
+    }
+
     public void shaped2x2Recipe(RecipeOutput output, RecipeCategory category, ItemLike result, int count, Object ingredient, String... modIds) {
         shapedRecipe(output, category, result, count, new String[]{"## ", "## "}, Map.of('#', ingredient), modIds);
     }
@@ -425,7 +473,7 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         }, modIds, IPCompat.FD + "/cutting", object, tool);
     }
 
-    public void cookingRecipe(RecipeOutput output, CookingPotRecipeBookTab tab, ItemLike result, int count, int cookingTime, float exp, @Nullable ItemLike container, Object[] objects, @Nullable String[] modIds) {
+    public void cookingRecipe(RecipeOutput output, CookingPotRecipeBookTab tab, ItemLike result, int count, int cookingTime, float exp, @Nullable ItemLike container, Object[] objects, @Nullable String... modIds) {
         regRecipe(output, CookingPotRecipeBuilder.cookingPotRecipe(result, count, cookingTime, exp, container), result, b -> {
             for (Object object : objects) {
                 b.setRecipeBookTab(tab);
@@ -435,27 +483,43 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         }, modIds, IPCompat.FD + "/cooking", objects);
     }
 
-    public void stonecuttingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, int count, Object object, @Nullable String[] modIds) {
+    public void stonecuttingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, int count, Object object, @Nullable String... modIds) {
         regRecipe(output, SingleItemRecipeBuilder.stonecutting(toIngredient(object), category, result, count), result, b -> {}, modIds, "stonecutting", object);
     }
 
-    public void blastingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String[] modIds) {
-        regRecipe(output, SimpleCookingRecipeBuilder.blasting(toIngredient(object), category, result, exp, (int) seconds * 20), result, b -> {}, modIds, "cooking/blasting", object);
+    public void blastingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String... modIds) {
+        blastingRecipe(output, category, result, exp, IPUtil.secondsToTicks(seconds), object, modIds);
     }
 
-    public void campfireCookingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String[] modIds) {
-        regRecipe(output, SimpleCookingRecipeBuilder.campfireCooking(toIngredient(object), category, result, exp, (int) seconds * 20), result, b -> {}, modIds, "cooking/campfire_cooking", object);
+    public void blastingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, int time, Object object, @Nullable String... modIds) {
+        regRecipe(output, SimpleCookingRecipeBuilder.blasting(toIngredient(object), category, result, exp, time), result, b -> {}, modIds, "cooking/blasting", object);
     }
 
-    public void smeltingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String[] modIds) {
-        regRecipe(output, SimpleCookingRecipeBuilder.smelting(toIngredient(object), category, result, exp, (int) seconds * 20), result, b -> {}, modIds, "cooking/smelting", object);
+    public void campfireCookingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String... modIds) {
+        campfireCookingRecipe(output, category, result, exp, IPUtil.secondsToTicks(seconds), object, modIds);
     }
 
-    public void smokingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String[] modIds) {
-        regRecipe(output, SimpleCookingRecipeBuilder.smoking(toIngredient(object), category, result, exp, (int) seconds * 20), result, b -> {}, modIds, "cooking/smoking", object);
+    public void campfireCookingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, int time, Object object, @Nullable String... modIds) {
+        regRecipe(output, SimpleCookingRecipeBuilder.campfireCooking(toIngredient(object), category, result, exp, time), result, b -> {}, modIds, "cooking/campfire_cooking", object);
     }
 
-    public void shapelessRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, int count, Object[] objects, String[] modIds) {
+    public void smeltingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String... modIds) {
+        smeltingRecipe(output, category, result, exp, IPUtil.secondsToTicks(seconds), object, modIds);
+    }
+
+    public void smeltingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, int time, Object object, @Nullable String... modIds) {
+        regRecipe(output, SimpleCookingRecipeBuilder.smelting(toIngredient(object), category, result, exp, time), result, b -> {}, modIds, "cooking/smelting", object);
+    }
+
+    public void smokingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, @Nullable String... modIds) {
+        smokingRecipe(output, category, result, exp, IPUtil.secondsToTicks(seconds), object, modIds);
+    }
+
+    public void smokingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, int time, Object object, @Nullable String... modIds) {
+        regRecipe(output, SimpleCookingRecipeBuilder.smoking(toIngredient(object), category, result, exp, time), result, b -> {}, modIds, "cooking/smoking", object);
+    }
+
+    public void shapelessRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, int count, Object[] objects, String... modIds) {
         regRecipe(output, ShapelessRecipeBuilder.shapeless(category, result, count), result, b -> {
             for (Object object : objects) {
                 b.requires(toIngredient(object));
@@ -578,16 +642,19 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         for (Object obj : fDObjects) {
             if (objects.size() >= 9) break;
 
+            if (obj instanceof TagKey<?> tag) {
+                if (tag.equals(IPItemTags.DOUGH) && objects.size() <= 7) {
+                    objects.add(Items.WHEAT);
+                    objects.add(Items.WHEAT);
+                    continue;
+                }
+            }
+
             if (obj instanceof ItemLike itemLike) {
                 Item item = itemLike.asItem();
                 if (RegUtil.key(item).getNamespace().equals(IPCompat.FD)) {
                     if (item == CompatUtil.fDItem("pie_crust") && objects.size() <= 7) {
                         objects.add(Tags.Items.DRINKS_MILK);
-                        objects.add(Items.WHEAT);
-                        continue;
-                    }
-                    if (item == CompatUtil.fDItem("dough") && objects.size() <= 7) {
-                        objects.add(Items.WHEAT);
                         objects.add(Items.WHEAT);
                         continue;
                     }

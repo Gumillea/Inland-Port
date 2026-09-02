@@ -99,6 +99,30 @@ public class RegUtil {
         return path.substring(path.lastIndexOf('/') + 1);
     }
 
+    public static boolean startsWith(String string, String prefix) {
+        return string.startsWith(prefix);
+    }
+
+    public static boolean startsWith(Item item, String prefix) {
+        return startsWith(path(item), prefix);
+    }
+
+    public static boolean startsWith(Block block, String prefix) {
+        return startsWith(path(block), prefix);
+    }
+
+    public static boolean endsWith(String string, String suffix) {
+        return string.endsWith(suffix);
+    }
+
+    public static boolean endsWith(Item item, String suffix) {
+        return endsWith(path(item), suffix);
+    }
+
+    public static boolean endsWith(Block block, String suffix) {
+        return endsWith(path(block), suffix);
+    }
+
     public static boolean never(BlockState state, BlockGetter getter, BlockPos pos) {
         return false;
     }

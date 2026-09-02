@@ -1,10 +1,9 @@
 package com.gumillea.inlandport.core.util.helpers.reg;
 
-import com.gumillea.inlandport.common.block.EdibleBlock;
-import com.gumillea.inlandport.common.item.EdibleBlockItem;
 import com.gumillea.inlandport.common.item.FoodItem;
 import com.gumillea.inlandport.core.api.record.TabContent;
 import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
+import com.gumillea.inlandport.core.util.tags.IPItemTags;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -121,31 +120,24 @@ public class CreativeTabHelper {
                         insertAfter(event, Tags.Items.FOODS_FOOD_POISONING, Items.SPIDER_EYE, stack);
                         insertAfter(event, Tags.Items.FOODS_COOKIE, Items.COOKIE, stack);
                         insertAfter(event, Tags.Items.FOODS_BREAD, Items.BREAD, stack);
+                        if (!stack.is(IPItemTags.CAKE_SLICE)) insertAfter(event, IPItemTags.CAKE, Items.CAKE, stack);
+                        if (!stack.is(IPItemTags.PIE_SLICE)) insertAfter(event, Tags.Items.FOODS_PIE, Items.PUMPKIN_PIE, stack);
                         insertAfter(event, Tags.Items.DRINKS_MILK, Items.MILK_BUCKET, stack);
 
-                        switch (stack.getItem()) {
-                            case FoodItem food -> {
-                                switch (food.getType()) {
-                                    case MAGIC_APPLE -> insertAfter(event, Items.ENCHANTED_GOLDEN_APPLE, stack);
-                                    case SNACK -> insertBefore(event, Items.BREAD, stack);
-                                    case DESSERT -> insertAfter(event, Items.PUMPKIN_PIE, stack);
-                                    case SOUP -> insertBefore(event, Items.RABBIT_STEW, stack);
-                                    case MEAL -> insertAfter(event, Items.RABBIT_STEW, stack);
-                                    case SYRUP -> insertBefore(event, Items.HONEY_BOTTLE, stack);
-                                    case DRINK -> insertAfter(event, Items.HONEY_BOTTLE, stack);
-                                    case MAGIC, SLICE -> {}
-                                    default -> insertAfter(event, Items.SPIDER_EYE, stack);
-                                }
+                        if (stack.getItem() instanceof FoodItem food) {
+                            switch (food.getType()) {
+                                case MAGIC_APPLE -> insertAfter(event, Items.ENCHANTED_GOLDEN_APPLE, stack);
+                                case SNACK -> insertBefore(event, Items.ROTTEN_FLESH, stack);
+                                case DESSERT -> insertAfter(event, Items.PUMPKIN_PIE, stack);
+                                case SOUP -> insertBefore(event, Items.RABBIT_STEW, stack);
+                                case MEAL -> insertAfter(event, Items.RABBIT_STEW, stack);
+                                case SYRUP -> insertBefore(event, Items.HONEY_BOTTLE, stack);
+                                case DRINK -> insertAfter(event, Items.HONEY_BOTTLE, stack);
+                                case MAGIC, SLICE -> {}
+                                default -> insertAfter(event, Items.SPIDER_EYE, stack);
                             }
-                            case EdibleBlockItem edibleBlockItem -> {
-                                EdibleBlock block = (EdibleBlock) edibleBlockItem.getBlock();
-                                switch (block.getType()) {
-                                    case CAKE -> insertAfter(event, Items.CAKE, stack);
-                                    case PIE -> insertAfter(event, Items.PUMPKIN_PIE, stack);
-                                }
-                            }
-                            default -> {}
-                        }}),
+                        }
+                    }),
 
                     add(INGREDIENTS, () -> {
                         insertAfter(event, Tags.Items.RAW_MATERIALS, Items.RAW_GOLD, stack);

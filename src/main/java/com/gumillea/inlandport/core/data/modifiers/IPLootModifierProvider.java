@@ -1,7 +1,10 @@
 package com.gumillea.inlandport.core.data.modifiers;
 
+import com.gumillea.inlandport.core.api.NotDisabledCondition;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
+import com.gumillea.inlandport.core.util.utils.LootTableUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
+import com.llamalad7.mixinextras.lib.apache.commons.ArrayUtils;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.CachedOutput;
@@ -11,6 +14,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -29,16 +33,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static com.gumillea.inlandport.core.util.utils.LootTableUtil.FRUIT;
-import static com.gumillea.inlandport.core.util.utils.LootTableUtil.fortuneChances;
+import static com.gumillea.inlandport.core.util.utils.LootTableUtil.*;
 
-public abstract class IPLootTableModifier extends GlobalLootModifierProvider {
+public abstract class IPLootModifierProvider extends GlobalLootModifierProvider {
     private final PackOutput output;
     private final String modId;
     private final HolderLookup.Provider provider;
     private final Map<ResourceLocation, LootTable> map = new LinkedHashMap<>();
 
-    public IPLootTableModifier(PackOutput output, CompletableFuture<HolderLookup.Provider> future, String modId) {
+    public IPLootModifierProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, String modId) {
         super(output, future, modId);
         this.output = output;
         this.modId = modId;
@@ -52,12 +55,14 @@ public abstract class IPLootTableModifier extends GlobalLootModifierProvider {
         List<LootItemCondition> list = new ArrayList<>();
         list.add(LootTableIdCondition.builder(getLoc(target)).build());
 
+
+
         add(name, new AddTableLootModifier(list.toArray(LootItemCondition[]::new), ResourceKey.create(Registries.LOOT_TABLE, path)), conditions);
     }
 
     protected void inject(Item item, Object target, LootTable.Builder inject, ICondition... conditions) {
         String path = getLoc(target).getPath();
-        inject("add_" + RegUtil.path(item) + "_to_" + RegUtil.getBaseName(path), target, inject, conditions);
+        inject("add_" + RegUtil.path(item) + "_to_" + RegUtil.getBaseName(path), target, inject, ArrayUtils.addAll(new ICondition[] {new NotDisabledCondition(RegUtil.key(item))}, conditions));
     }
 
     protected void inject(Item item, Object target, float chance, ICondition... conditions) {
@@ -65,11 +70,45 @@ public abstract class IPLootTableModifier extends GlobalLootModifierProvider {
     }
 
     protected void injectWithFortune(Item item, Object target, float[] chances, ICondition... conditions) {
-        inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(fortuneChances(provider, chances)).add(LootItem.lootTableItem(item))), conditions);
+        inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootTableUtil.hasSilkTouch(provider).invert()).when(fortuneChances(provider, chances)).add(LootItem.lootTableItem(item))), conditions);
     }
 
-    protected void injectFruit(Item item, Object target, ICondition... conditions) {
-        inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(fortuneChances(provider, FRUIT)).add(LootItem.lootTableItem(item))), conditions);
+    protected void injectIntoPlant(Item item, Object target, LootItemCondition.Builder lootCond, ICondition... conditions) {
+        inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootTableUtil.hasSilkTouchOrShears(provider).invert()).when(lootCond).add(LootItem.lootTableItem(item))), conditions);
+    }
+
+    protected void injectIntoPlant(Item item, Object target, float[] chances, ICondition... conditions) {
+        injectIntoPlant(item, target, fortuneChances(provider, chances), conditions);
+    }
+
+    protected void injectIntoPlant(Item item, Object target, ICondition... conditions) {
+        injectIntoPlant(item, target, FRUIT, conditions);
+    }
+
+    protected void injectIntoTallPlant(Item item, Block target, LootItemCondition.Builder lootCond, ICondition... conditions) {
+        inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootTableUtil.hasSilkTouchOrShears(provider).invert()).when(isUpperPart(target)).when(hasLowerPart(target)).when(lootCond).add(LootItem.lootTableItem(item)))
+                .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootTableUtil.hasSilkTouchOrShears(provider).invert()).when(isLowerPart(target)).when(hasUpperPart(target)).when(lootCond).add(LootItem.lootTableItem(item))), conditions);
+    }
+
+    protected void injectIntoGrassLikeBlock(Item item, Block shortTarget, Block tallTarget ,LootItemCondition.Builder lootCond, ICondition... conditions) {
+        injectIntoPlant(item, shortTarget, lootCond, conditions);
+        injectIntoTallPlant(item, tallTarget, lootCond, conditions);
+    }
+
+    protected void injectIntoGrass(Item item, LootItemCondition.Builder lootCond, ICondition... conditions) {
+        injectIntoGrassLikeBlock(item, Blocks.SHORT_GRASS, Blocks.TALL_GRASS, lootCond, conditions);
+    }
+
+    protected void injectIntoGrass(Item item, float chance, ICondition... conditions) {
+        injectIntoGrass(item, LootItemRandomChanceCondition.randomChance(chance), conditions);
+    }
+
+    protected void injectIntoFern(Item item, LootItemCondition.Builder lootCond, ICondition... conditions) {
+        injectIntoGrassLikeBlock(item, Blocks.FERN, Blocks.LARGE_FERN, lootCond, conditions);
+    }
+
+    protected void injectIntoFern(Item item, float chance, ICondition... conditions) {
+        injectIntoFern(item, LootItemRandomChanceCondition.randomChance(chance), conditions);
     }
 
     @Override
@@ -90,11 +129,9 @@ public abstract class IPLootTableModifier extends GlobalLootModifierProvider {
 
     private ResourceLocation getLoc(Object object) {
         switch (object) {
-            case Item item -> {
-                return RegUtil.key(item);
-            }
             case Block block -> {
-                return RegUtil.key(block);
+                ResourceLocation location = RegUtil.key(block);
+                return IPUtil.loc(location.getNamespace(), "blocks/" + location.getPath());
             }
             case ResourceLocation location -> {
                 return location;
@@ -105,5 +142,7 @@ public abstract class IPLootTableModifier extends GlobalLootModifierProvider {
             default -> throw new IllegalStateException("Unexpected value: " + object);
         }
     }
+
+
 
 }

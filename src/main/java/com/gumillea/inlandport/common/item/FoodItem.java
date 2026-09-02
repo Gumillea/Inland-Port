@@ -56,6 +56,7 @@ public class FoodItem extends TooltipItem {
     public enum Type {
         VEGETABLE,
         GRAIN,
+        NUT,
 
         RAW_MEAT,
         COOKED_MEAT,

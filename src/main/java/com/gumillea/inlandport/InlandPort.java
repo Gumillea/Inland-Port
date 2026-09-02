@@ -2,7 +2,7 @@ package com.gumillea.inlandport;
 
 import com.gumillea.inlandport.core.data.providers.AutoDataGenerator;
 import com.gumillea.inlandport.core.util.helpers.reg.BlockHelper;
-import com.gumillea.inlandport.test.data.modifiers.TestLootTableModifier;
+import com.gumillea.inlandport.test.data.modifiers.TestLootModifierProvider;
 import com.gumillea.inlandport.test.data.providers.server.*;
 import com.gumillea.inlandport.test.data.providers.TestRegistrySets;
 import com.gumillea.inlandport.test.reg.*;
@@ -71,7 +71,7 @@ public class InlandPort {
         generator.addProvider(server, new TestItemTagsProvider(output, provider, blockTagsProvider.contentsGetter()));
         generator.addProvider(server, new TestDamageTypeTagsProvider(output, provider, helper));
 
-        generator.addProvider(server, new TestLootTableModifier(output, provider));
+        generator.addProvider(server, new TestLootModifierProvider(output, provider));
 
         boolean client = event.includeClient();
         generator.addProvider(client, new TestLanguageProvider(output));

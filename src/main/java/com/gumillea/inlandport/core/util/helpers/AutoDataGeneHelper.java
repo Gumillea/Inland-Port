@@ -165,7 +165,7 @@ public class AutoDataGeneHelper {
                     provider.wallBlock(wall, baseBlock);
                 }
                 default -> {
-                    if (RegUtil.path(block).startsWith("chiseled_")) {
+                    if (RegUtil.startsWith(block, "chiseled_")) {
                         provider.chiseledBlock(block);
                     } else {
                         provider.simpleBlock(block);
@@ -219,10 +219,15 @@ public class AutoDataGeneHelper {
                 case WallBlock ignored -> provider.copy(BlockTags.WALLS, ItemTags.WALLS);
                 case LeavesBlock ignored -> provider.copy(BlockTags.LEAVES, ItemTags.LEAVES);
                 case EdibleBlock edibleBlock -> {
+                    provider.addIfExist(Tags.Items.FOODS_EDIBLE_WHEN_PLACED, edibleBlock.asItem());
                     if (edibleBlock.getType() == EdibleBlock.Type.PIE) {
-                        provider.addIfExist(Tags.Items.FOODS_EDIBLE_WHEN_PLACED, edibleBlock.asItem());
                         provider.addIfExist(Tags.Items.FOODS_PIE, edibleBlock.asItem());
                         provider.addIfExist(Tags.Items.FOODS_PIE, edibleBlock.getSlice().getItem());
+                        provider.addIfExist(IPItemTags.PIE_SLICE, edibleBlock.getSlice().getItem());
+                    } else {
+                        provider.addIfExist(IPItemTags.CAKE, edibleBlock.asItem());
+                        provider.addIfExist(IPItemTags.CAKE, edibleBlock.getSlice().getItem());
+                        provider.addIfExist(IPItemTags.CAKE_SLICE, edibleBlock.getSlice().getItem());
                     }
                 }
                 default -> {}
@@ -241,6 +246,7 @@ public class AutoDataGeneHelper {
                     switch (food.getType()) {
                         case VEGETABLE -> provider.tag(Tags.Items.FOODS_VEGETABLE).add(item);
                         case GRAIN -> provider.tag(IPItemTags.GRAIN).add(item);
+                        case NUT -> provider.tag(IPItemTags.NUT).add(item);
 
                         case RAW_MEAT -> provider.tag(Tags.Items.FOODS_RAW_MEAT).add(item);
                         case COOKED_MEAT -> provider.tag(Tags.Items.FOODS_COOKED_MEAT).add(item);
@@ -255,7 +261,12 @@ public class AutoDataGeneHelper {
                         case BREAD -> provider.tag(Tags.Items.FOODS_BREAD).add(item);
                         case SOUP -> provider.tag(Tags.Items.FOODS_SOUP).add(item);
 
-                        case MAGIC -> provider.tag(Tags.Items.FOODS_GOLDEN).add(item);
+                        case MAGIC -> {
+                            if (RegUtil.path(food).contains("golden") || RegUtil.path(food).contains("glistering")) {
+                                provider.tag(Tags.Items.FOODS_GOLDEN).add(item);
+                                provider.tag(ItemTags.PIGLIN_LOVED).add(item);
+                            }
+                        }
 
                         default -> provider.tag(Tags.Items.FOODS).add(item);
                     }
