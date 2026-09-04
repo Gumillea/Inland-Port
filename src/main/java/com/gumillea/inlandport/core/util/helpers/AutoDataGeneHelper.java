@@ -113,6 +113,7 @@ public class AutoDataGeneHelper {
             Block baseBlock;
 
             switch (block) {
+                case CropBlock ignored -> provider.cropBlock(block);
                 case LogBlock logBlock -> provider.logOrWoodBlock(logBlock);
                 case StickyBlock ignored -> provider.honeyBlock(block);
                 case StorageBlock storageBlock -> provider.cubeBottomTop(storageBlock);
@@ -222,12 +223,10 @@ public class AutoDataGeneHelper {
                     provider.addIfExist(Tags.Items.FOODS_EDIBLE_WHEN_PLACED, edibleBlock.asItem());
                     if (edibleBlock.getType() == EdibleBlock.Type.PIE) {
                         provider.addIfExist(Tags.Items.FOODS_PIE, edibleBlock.asItem());
-                        provider.addIfExist(Tags.Items.FOODS_PIE, edibleBlock.getSlice().getItem());
-                        provider.addIfExist(IPItemTags.PIE_SLICE, edibleBlock.getSlice().getItem());
+                        if (edibleBlock.getSlice() != null) provider.addIfExist(IPItemTags.PIE_SLICE, edibleBlock.getSlice().getItem());
                     } else {
                         provider.addIfExist(IPItemTags.CAKE, edibleBlock.asItem());
-                        provider.addIfExist(IPItemTags.CAKE, edibleBlock.getSlice().getItem());
-                        provider.addIfExist(IPItemTags.CAKE_SLICE, edibleBlock.getSlice().getItem());
+                        if (edibleBlock.getSlice() != null) provider.addIfExist(IPItemTags.CAKE_SLICE, edibleBlock.getSlice().getItem());
                     }
                 }
                 default -> {}

@@ -1,5 +1,7 @@
 package com.gumillea.inlandport.core.data.providers.server;
 
+import com.baisylia.cookscollection.recipe.OvenRecipe;
+import com.baisylia.cookscollection.recipe.OvenShapedRecipe;
 import com.gumillea.inlandport.common.block.EdibleBlock;
 import com.gumillea.inlandport.common.block.StorageBlock;
 import com.gumillea.inlandport.common.block.family.SimpleBaseBlock;
@@ -15,6 +17,7 @@ import com.gumillea.inlandport.core.util.utils.IPUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
 import com.llamalad7.mixinextras.lib.apache.commons.ArrayUtils;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
@@ -25,6 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
@@ -281,16 +285,32 @@ public abstract class IPRecipeProvider extends RecipeProvider {
     }
 
     //Mixed
-    public void stewRecipe(RecipeOutput output, ItemLike result, Object[] objects, @Nullable String... modIds){
-        simpleFDCooking(output, CookingPotRecipeBookTab.MEALS, result, 1, Items.BOWL, objects, modIds);
+    public void stewRecipe(RecipeOutput output, ItemLike result, int count, int fDCount, Object[] objects, boolean coexist, String... modIds){
+        String[] cond = coexist ? modIds : ArrayUtils.addAll(new String[] {no(IPCompat.FD)}, modIds);
+        String[] fDCond = coexist ? modIds : ArrayUtils.addAll(new String[] {IPCompat.FD}, modIds);
+        Object[] newObjects = ArrayUtils.addAll(new Object[] {Items.BOWL}, objects);
+
+        shapelessRecipe(output, RecipeCategory.FOOD, result, count, handleFDObjects(newObjects), cond);
+        simpleFDCooking(output, CookingPotRecipeBookTab.MEALS, result, fDCount, Items.BOWL, objects, fDCond);
+    }
+
+    public void stewRecipe(RecipeOutput output, ItemLike result, Object[] objects, String... modIds){
+        stewRecipe(output, result, 1, 1, objects, false, modIds);
+    }
+
+    public void stewCompatRecipe(RecipeOutput output, ItemLike result, Object[] objects, String... modIds){
+        stewRecipe(output, result, 1, 2, objects, true, modIds);
+
     }
 
     public void pieRecipe(RecipeOutput output, ItemLike result, int count, int fDCount, String[] pattern, Map<Character, Object> map, boolean coexist, String... modIds) {
         String[] cond = coexist ? modIds : ArrayUtils.addAll(new String[] {no(IPCompat.FD)}, modIds);
-        String[] fDCond = coexist ? modIds : ArrayUtils.addAll(new String[] {IPCompat.FD}, modIds);
+        String[] fDCond = coexist ? modIds : ArrayUtils.addAll(new String[] {IPCompat.FD, no(IPCompat.CC)}, modIds);
 
-        shapelessRecipe(output, RecipeCategory.FOOD, result, count, handleFDObjects(getObjects(pattern, map)), cond);
+        shapelessRecipe(output, RecipeCategory.FOOD, result, count, handleFDObjects(getObjects(pattern, map, true)), cond);
         shapedRecipe(output, RecipeCategory.FOOD, result, fDCount, pattern, map, fDCond);
+        bakingCCRecipe(output, result, fDCount, 200, getObjects(pattern, map, false), modIds);
+
         if (result instanceof EdibleBlock edibleBlock) {
             Item slice = edibleBlock.getSlice().getItem();
             cuttingRecipe(output, slice, 4,1F, edibleBlock, IPItemTags.KNIVES, modIds, null);
@@ -306,21 +326,52 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         pieRecipe(output, result, 1, 2, pattern, map, true, modIds);
     }
 
-    public void doughRecipe(RecipeOutput output, ItemLike result, int count, int fDCount, Object[] objects, boolean coexist, String... modIds) {
-        String[] cond = coexist ? modIds : ArrayUtils.addAll(new String[] {no(IPCompat.FD)}, modIds);
-        String[] fDCond = coexist ? modIds : ArrayUtils.addAll(new String[] {IPCompat.FD}, modIds);
+    public void cookieRecipe(RecipeOutput output, ItemLike result, int count, int fDCount, Object[] objects, boolean coexist, String... modIds) {
+        String[] cond = coexist ? modIds : ArrayUtils.addAll(new String[] {no(IPCompat.CC)}, modIds);
+        String[] cCCond = coexist ? modIds : ArrayUtils.addAll(new String[] {IPCompat.CC}, modIds);
         Object[] newObjects = ArrayUtils.addAll(new Object[] {IPItemTags.DOUGH}, objects);
 
         shapelessRecipe(output, RecipeCategory.FOOD, result, count, handleFDObjects(newObjects), cond);
-        shapelessRecipe(output, RecipeCategory.FOOD, result, fDCount, newObjects, fDCond);
+        bakingCCRecipe(output, result, fDCount, 200, ArrayUtils.addAll(new Object[] {Items.SUGAR}, newObjects), cCCond);
     }
 
     public void cookieRecipe(RecipeOutput output, ItemLike result, Object[] objects, String... modIds) {
-        doughRecipe(output, result, 8, 8, objects, false, modIds);
+        cookieRecipe(output, result, 8, 8, objects, false, modIds);
     }
 
     public void cookieCompatRecipe(RecipeOutput output, ItemLike result, Object[] objects, String... modIds) {
-        doughRecipe(output, result, 8, 10, objects, true, modIds);
+        cookieRecipe(output, result, 8, 10, objects, true, modIds);
+    }
+
+    //CB - Baking
+    public void bakingShapedCCRecipe(RecipeOutput output, ItemLike result, int count, int cookingTime, String[] pattern, Map<Character, Object> map, String... modIds) {
+        Map<Character, Ingredient> ingredients = new HashMap<>();
+
+        map.forEach((character, object) -> {
+            switch (object) {
+                case ItemLike item -> ingredients.put(character, Ingredient.of(item));
+                case Ingredient ingredient -> ingredients.put(character, ingredient);
+                case TagKey<?> tag -> ingredients.put(character, Ingredient.of((TagKey<Item>) tag));
+                default -> throw new IllegalStateException("Unexpected value: " + object);
+            }
+        });
+
+        ShapedRecipePattern patttern = ShapedRecipePattern.of(ingredients, pattern);
+        output.accept(IPUtil.loc(modId, "cookscollection/baking/" + RegUtil.path(result.asItem())), new OvenShapedRecipe(patttern, RegUtil.stack(result.asItem(), count), cookingTime), null, toConds(result, modIds, getObjects(pattern, map, true)));
+    }
+
+    public void bakingCCRecipe(RecipeOutput output, ItemLike result, int count, int cookingTime, Object[] objects, String... modIds) {
+        NonNullList<Ingredient> ingredients = NonNullList.create();
+
+        for (Object object : objects) {
+            ingredients.add(toIngredient(object));
+        }
+
+        output.accept(IPUtil.loc(modId, "cookscollection/baking/" + RegUtil.path(result.asItem())), new OvenRecipe(ingredients, RegUtil.stack(result.asItem(), count), cookingTime), null, toConds(result, modIds, objects));
+    }
+
+    public void bakingCCRecipe(RecipeOutput output, ItemLike result, Object[] objects, String... modIds) {
+        bakingCCRecipe(output, result, 1, 200, objects, modIds);
     }
 
     //FD - Cooking
@@ -532,8 +583,12 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         regRecipe(output, ShapedRecipeBuilder.shaped(category, result, count), result, b -> {
             for (String row : pattern) b.pattern(row);
             map.forEach((character, object) -> {
-                if (object instanceof ItemLike item) b.define(character, item);
-                if (object instanceof TagKey<?> tag) b.define(character, (TagKey<Item>) tag);
+                switch (object) {
+                    case ItemLike item -> b.define(character, item);
+                    case Ingredient ingredient -> b.define(character, ingredient);
+                    case TagKey<?> tag -> b.define(character, (TagKey<Item>) tag);
+                    default -> throw new IllegalStateException("Unexpected value: " + object);
+                }
             });
         }, modIds, "shaped", map.values().toArray());
     }
@@ -561,7 +616,6 @@ public abstract class IPRecipeProvider extends RecipeProvider {
                 case ItemLike item -> {
                     itemUnlocks.add(item);
                     if (!RegUtil.isVanilla(RegUtil.key(item))) {
-                        conditions.add(new ItemExistsCondition(RegUtil.key(item.asItem())));
                         conditions.add(new NotDisabledCondition(RegUtil.key(item.asItem())));
                     }
                 }
@@ -577,7 +631,6 @@ public abstract class IPRecipeProvider extends RecipeProvider {
                                 ItemLike itemm = item.getItem();
                                 itemUnlocks.add(itemm);
                                 if (!RegUtil.isVanilla(RegUtil.key(itemm))) {
-                                    conditions.add(new ItemExistsCondition(RegUtil.key(itemm.asItem())));
                                     conditions.add(new NotDisabledCondition(RegUtil.key(itemm.asItem())));
                                 }
                             }
@@ -618,6 +671,57 @@ public abstract class IPRecipeProvider extends RecipeProvider {
 
         LOCATIONS.add(location);
         builder.save(output.withConditions(conditions.toArray(new ICondition[0])), location);
+    }
+
+    protected ICondition[] toConds(ItemLike result, String[] modIds, Object... objects) {
+        List<ICondition> conditions = new ArrayList<>();
+
+        if (modIds != null) {
+            for (String modId : modIds) {
+                if (modId != null) {
+                    if (modId.startsWith("no:")){
+                        conditions.add(new NotCondition(new ModLoadedCondition(modId.replace("no:", ""))));
+                    } else {
+                        conditions.add(new ModLoadedCondition(modId));
+                    }
+                }
+            }
+        }
+
+        for (Object object : objects) {
+            switch (object) {
+                case ItemLike item -> {
+                    if (!RegUtil.isVanilla(RegUtil.key(item))) {
+                        conditions.add(new NotDisabledCondition(RegUtil.key(item.asItem())));
+                    }
+                }
+                case TagKey<?> tagKey -> {
+                    TagKey<Item> tag = (TagKey<Item>) tagKey;
+                    if (!RegUtil.isVanilla(tag.location())) conditions.add(new NotCondition(new TagEmptyCondition(tag.location())));
+                }
+                case Ingredient ingredient -> {
+                    for (Ingredient.Value value : ingredient.getValues()) {
+                        switch (value) {
+                            case Ingredient.ItemValue(ItemStack item) -> {
+                                ItemLike itemm = item.getItem();
+                                if (!RegUtil.isVanilla(RegUtil.key(itemm))) {
+                                    conditions.add(new NotDisabledCondition(RegUtil.key(itemm.asItem())));
+                                }
+                            }
+                            case Ingredient.TagValue(TagKey<Item> tag) -> {
+                                if (!RegUtil.isVanilla(tag.location())) conditions.add(new NotCondition(new TagEmptyCondition(tag.location())));
+                            }
+                            default -> {}
+                        }
+                    }
+                }
+                default -> {}
+            }
+        }
+
+        conditions.add(new NotDisabledCondition(RegUtil.key(result.asItem())));
+
+        return conditions.toArray(new ICondition[0]);
     }
 
     @SuppressWarnings("unchecked")
@@ -666,16 +770,18 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         return objects.toArray();
     }
 
-    protected Object[] getObjects(String[] pattern, Map<Character, Object> map) {
-        List<Object> objects = new ArrayList<>();
+    protected Object[] getObjects(String[] pattern, Map<Character, Object> map, boolean only) {
+        List<Object> list = new ArrayList<>();
+        Set<Object> set = new LinkedHashSet<>();
 
         for (String row : pattern) {
             for (char c : row.toCharArray()) {
                 if (c == ' ') continue;
-                objects.add(map.get(c));
+                list.add(map.get(c));
+                set.add(map.get(c));
             }
         }
-        return objects.toArray();
+        return only ? set.toArray() : list.toArray();
     }
 
 }

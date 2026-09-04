@@ -15,6 +15,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.neoforged.neoforge.client.model.generators.*;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -203,6 +204,7 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
         String texture = "block/" + RegUtil.path(block);
 
         ModelFile honeyBlock = models().withExistingParent(path, mcLoc("block/honey_block"))
+                .renderType("cutout")
                 .texture("particle", texture)
                 .texture("down", texture)
                 .texture("up", texture)
@@ -211,7 +213,6 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
         simpleBlock(block, honeyBlock);
         simpleBlockItem(block);
     }
-
 
     public void edibleBlock(EdibleBlock block) {
         String path = RegUtil.path(block);
@@ -235,6 +236,44 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
 
             return ConfiguredModel.builder().modelFile(model).rotationY(((int) facing.toYRot() + 180) % 360).build();
         });
+    }
+
+    public void cropBlock(Block block, IntegerProperty prop) {
+        String path = RegUtil.path(block);
+        String texture = "block/" + path;
+
+        getVariantBuilder(block).forAllStates(state -> {
+            int age = state.getValue(prop);
+            String name = texture + "_stage" + age;
+            ResourceLocation locA = loc(name);
+            ResourceLocation locB = loc(texture + "/stage" + age);
+            ResourceLocation finalLoc = hasExistingTexture(name) ? locA : locB;
+
+            return ConfiguredModel.builder().modelFile(models().crop(name, finalLoc).renderType("cutout")).build();
+        });
+    }
+
+    public void cropBlock(Block block) {
+        cropBlock(block, BlockStateProperties.AGE_7);
+    }
+
+    public void crossCropBlock(Block block, IntegerProperty prop) {
+        String path = RegUtil.path(block);
+        String texture = "block/" + path;
+
+        getVariantBuilder(block).forAllStates(state -> {
+            int age = state.getValue(prop);
+            String name = texture + "_stage" + age;
+            ResourceLocation locA = loc(name);
+            ResourceLocation locB = loc(texture + "/stage" + age);
+            ResourceLocation finalLoc = CompatUtil.isPresent(locA) ? locB : locA;
+
+            return ConfiguredModel.builder().modelFile(models().cross(name, finalLoc).renderType("cutout")).build();
+        });
+    }
+
+    public void crossCropBlock(Block block) {
+        cropBlock(block, BlockStateProperties.AGE_7);
     }
 
     public void simpleBlockItem(@NotNull Block block) {

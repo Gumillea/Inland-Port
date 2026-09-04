@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -39,8 +38,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import static com.gumillea.inlandport.common.block.EdibleBlock.Type.*;
 
 public class EdibleBlock extends Block {
     private final Type type;
@@ -123,6 +120,8 @@ public class EdibleBlock extends Block {
     }
 
     protected InteractionResult eat(LevelAccessor level, BlockPos pos, BlockState state, Player player) {
+        if (getSlice() == null) return InteractionResult.FAIL;
+
         FoodProperties food = slice.get().getFoodProperties(getSlice(), player);
         int bites = state.getValue(BITES);
 

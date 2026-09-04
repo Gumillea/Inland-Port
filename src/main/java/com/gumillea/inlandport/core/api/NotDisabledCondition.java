@@ -3,6 +3,7 @@ package com.gumillea.inlandport.core.api;
 import com.gumillea.inlandport.core.util.helpers.reg.RegHelper;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.conditions.ICondition;
 
@@ -20,7 +21,7 @@ public class NotDisabledCondition implements ICondition {
 
     @Override
     public boolean test(IContext context) {
-        return !RegHelper.isDisabled(location);
+        return BuiltInRegistries.ITEM.containsKey(location) && !RegHelper.isDisabled(location);
     }
 
     @Override
