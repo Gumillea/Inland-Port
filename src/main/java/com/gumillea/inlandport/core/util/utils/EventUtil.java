@@ -51,13 +51,18 @@ public class EventUtil {
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
 
-        if (!level.isClientSide && targetFilter.test(state)) {
+        if (targetFilter.test(state)) {
             if (itemFilter == null || itemFilter.test(inHand)) {
                 player.swing(hand);
-                task.run();
 
-                if (gameEvent != null) level.gameEvent(gameEvent, pos, GameEvent.Context.of(player));
-                event.setCancellationResult(InteractionResult.SUCCESS);
+                if (!level.isClientSide) {
+                    task.run();
+                    if (gameEvent != null) {
+                        level.gameEvent(gameEvent, pos, GameEvent.Context.of(player));
+                    }
+                }
+
+                event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
                 event.setCanceled(true);
             }
         }

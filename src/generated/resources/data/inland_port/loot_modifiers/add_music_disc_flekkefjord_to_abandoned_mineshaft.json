@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "inland_port:not_disabled",
+      "item": "inland_port:music_disc_flekkefjord"
+    }
+  ],
   "type": "neoforge:add_table",
   "conditions": [
     {

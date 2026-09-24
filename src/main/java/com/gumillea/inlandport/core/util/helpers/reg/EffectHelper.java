@@ -17,6 +17,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.Arrays;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class EffectHelper {
@@ -81,16 +82,22 @@ public class EffectHelper {
         return 1F / 2F;
     }
 
-    public DeferredHolder<Potion, Potion> regPotion(String name, MobEffectInstance... insts) {
-        return potionReg.register(name, () -> new Potion(modId + "." + name, insts));
+    public DeferredHolder<Potion, Potion> regPotion(String name, Supplier<MobEffectInstance[]> insts) {
+        return potionReg.register(name, () -> new Potion(modId + "." + name, insts.get()));
     }
 
-    public DeferredHolder<Potion, Potion> regLongPotion(String name, MobEffectInstance... insts) {
-        return regPotion("long_" + name, insts);
+    public DeferredHolder<Potion, Potion> regLongPotion(String name, Supplier<MobEffectInstance[]> insts) {
+        return regPotion("long_" + name, () -> longInst(insts.get(), LONG()));
     }
 
-    public DeferredHolder<Potion, Potion> regStrongPotion(String name, MobEffectInstance... insts) {
-        return regPotion("strong_" + name, insts);
+    public DeferredHolder<Potion, Potion> regStrongPotion(String name, Supplier<MobEffectInstance[]> insts) {
+        return regPotion("strong_" + name, () -> strongInst(insts.get(), 1, STRONG()));
+    }
+
+    public DeferredHolder<Potion, Potion> regPotionsWithLongAndStrong(String name, Supplier<MobEffectInstance[]> insts) {
+        regLongPotion(name, insts);
+        regStrongPotion(name, insts);
+        return regPotion(name, insts);
     }
 
     private static MobEffectInstance[] longInst(MobEffectInstance[] original, float durationMultiplier) {
@@ -99,22 +106,6 @@ public class EffectHelper {
 
     private static MobEffectInstance[] strongInst(MobEffectInstance[] original, int extraAmplifier, float durationMultiplier) {
         return Arrays.stream(original).map(inst -> new MobEffectInstance(inst.getEffect(), (int) (inst.getDuration() * durationMultiplier), inst.getAmplifier() + extraAmplifier, inst.isAmbient(), inst.isVisible(), inst.showIcon())).toArray(MobEffectInstance[]::new);
-    }
-
-    public DeferredHolder<Potion, Potion> regPotionsWithLong(String name, MobEffectInstance... insts) {
-        regLongPotion(name, longInst(insts, LONG()));
-        return regPotion(name, insts);
-    }
-
-    public DeferredHolder<Potion, Potion> regPotionsWithStrong(String name, MobEffectInstance... insts) {
-        regStrongPotion(name, strongInst(insts, 1, STRONG()));
-        return regPotion(name, insts);
-    }
-
-    public DeferredHolder<Potion, Potion> regPotionsWithLongAndStrong(String name, MobEffectInstance... insts) {
-        regLongPotion(name, longInst(insts, LONG()));
-        regStrongPotion(name, strongInst(insts, 1, STRONG()));
-        return regPotion(name, insts);
     }
 
     public static void addStandardPotionRecipes(PotionBrewing.Builder builder, Holder<Potion> potion, Item ingredient, Holder<Potion> result) {

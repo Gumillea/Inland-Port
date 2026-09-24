@@ -24,7 +24,7 @@ import java.util.Objects;
 
 public abstract class IPBlockStateProvider extends BlockStateProvider {
 
-    private final String modId;
+    protected final String modId;
 
     public IPBlockStateProvider(PackOutput output, String modId, ExistingFileHelper helper) {
         super(output, modId, helper);
@@ -84,6 +84,7 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
             simpleBlock(block);
         }
     }
+
 
     public void logOrWoodBlock(LogBlock block) {
         String blockId = RegUtil.path(block);
@@ -204,7 +205,7 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
         String texture = "block/" + RegUtil.path(block);
 
         ModelFile honeyBlock = models().withExistingParent(path, mcLoc("block/honey_block"))
-                .renderType("cutout")
+                .renderType("translucent")
                 .texture("particle", texture)
                 .texture("down", texture)
                 .texture("up", texture)

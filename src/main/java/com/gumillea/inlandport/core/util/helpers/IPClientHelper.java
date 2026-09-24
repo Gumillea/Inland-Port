@@ -18,4 +18,12 @@ public class IPClientHelper {
     public static void setTranslucent(Block... blocks) {
         setRenderTypes(RenderType.translucent(), blocks);
     }
+
+    public static float pixel(int i) {
+        return pixel((float) i);
+    }
+
+    public static float pixel(float f) {
+        return f / 16F;
+    }
 }

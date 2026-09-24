@@ -21,7 +21,7 @@ import static com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper.autoG
 
 public abstract class IPLootTableProvider extends LootTableProvider {
 
-    public final String modId;
+    protected final String modId;
 
     public IPLootTableProvider(PackOutput output, String modId, CompletableFuture<HolderLookup.Provider> future) {
         this(output, modId, future, IPBlockLoot::new);

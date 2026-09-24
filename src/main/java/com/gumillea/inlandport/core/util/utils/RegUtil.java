@@ -2,6 +2,8 @@ package com.gumillea.inlandport.core.util.utils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffect;
@@ -15,6 +17,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
@@ -28,6 +32,10 @@ public class RegUtil {
     }
 
     public static String path(Item item) {
+        return key(item).getPath();
+    }
+
+    public static String path(ItemLike item) {
         return key(item).getPath();
     }
 
@@ -59,6 +67,14 @@ public class RegUtil {
         return NeoForgeRegistries.FLUID_TYPES.getKey(fluidType);
     }
 
+    public static ResourceLocation key(Fluid fluid) {
+        return BuiltInRegistries.FLUID.getKey(fluid);
+    }
+
+    public static String path(Fluid fluid) {
+        return key(fluid).getPath();
+    }
+
     public static ResourceLocation key(Attribute attribute) {
         return BuiltInRegistries.ATTRIBUTE.getKey(attribute);
     }
@@ -81,6 +97,10 @@ public class RegUtil {
 
     public static String path(CreativeModeTab tab) {
         return key(tab).getPath();
+    }
+
+    public static ResourceKey<ConfiguredFeature<?, ?>> configuredFeature(ResourceLocation location ){
+        return ResourceKey.create(Registries.CONFIGURED_FEATURE, location);
     }
 
     public static String getSuffix(String path) {
@@ -135,11 +155,11 @@ public class RegUtil {
         return item instanceof BlockItem;
     }
 
-    public static ItemStack stack(Item item, int count) {
+    public static ItemStack stack(ItemLike item, int count) {
         return new ItemStack(item, count);
     }
 
-    public static ItemStack stack(Item item) {
+    public static ItemStack stack(ItemLike item) {
         return stack(item, 1);
     }
 

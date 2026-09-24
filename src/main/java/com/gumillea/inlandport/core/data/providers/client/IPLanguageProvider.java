@@ -27,9 +27,9 @@ import java.util.Set;
 
 public abstract class IPLanguageProvider extends LanguageProvider {
 
-    private final String modId;
-    private final Set<String> keys = new HashSet<>();
-    private boolean isAutoGenerating = false;
+    protected final String modId;
+    protected final Set<String> keys = new HashSet<>();
+    protected boolean isAutoGenerating = false;
 
     public IPLanguageProvider(PackOutput output, String modId) {
         super(output, modId, "en_us");
@@ -89,7 +89,7 @@ public abstract class IPLanguageProvider extends LanguageProvider {
         for (FluidType fluidType : fluidTypes) {
             ResourceLocation location = RegUtil.key(fluidType);
             String key = "fluid_type." + location.getNamespace() + "." + location.getPath();
-            this.add(key, format(location));
+            this.add(key, format(location).replace(" Fluid", ""));
         }
     }
 

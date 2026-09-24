@@ -2,16 +2,18 @@ package com.gumillea.inlandport.core.data.providers.client;
 
 import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
+import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public abstract class IPItemModelProvider extends ItemModelProvider {
 
-    private final String modId;
+    protected final String modId;
 
     public IPItemModelProvider(PackOutput output, String modId, ExistingFileHelper helper) {
         super(output, modId, helper);
@@ -49,6 +51,25 @@ public abstract class IPItemModelProvider extends ItemModelProvider {
     public void addSpawnEggItem(Item... items) {
         for (Item item : items)
             this.spawnEggItem(item);
+    }
+
+    public void addDurabilityItem(Item... items) {
+        for (Item item : items) {
+            ResourceLocation baseName = RegUtil.key(item);
+            String path = baseName.getPath();
+            int maxDamage = item.getMaxDamage(RegUtil.stack(item));
+
+            for (int i = 1; i < maxDamage; i++) {
+                String subPath = path + i;
+                withExistingParent(subPath, "item/generated").texture("layer0", modLoc("item/" + subPath));
+            }
+
+            ItemModelBuilder builder = withExistingParent(path, "item/generated").texture("layer0", modLoc("item/" + path + "0"));
+
+            for (int i = 1; i < maxDamage; i++) {
+                builder.override().predicate(IPUtil.mcLoc("damage"), (float) i / maxDamage).model(getExistingFile(modLoc("item/" + path + i))).end();
+            }
+        }
     }
 
 }

@@ -113,7 +113,6 @@ public class AutoDataGeneHelper {
             Block baseBlock;
 
             switch (block) {
-                case CropBlock ignored -> provider.cropBlock(block);
                 case LogBlock logBlock -> provider.logOrWoodBlock(logBlock);
                 case StickyBlock ignored -> provider.honeyBlock(block);
                 case StorageBlock storageBlock -> provider.cubeBottomTop(storageBlock);

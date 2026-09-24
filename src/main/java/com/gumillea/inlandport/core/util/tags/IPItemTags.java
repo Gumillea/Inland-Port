@@ -8,6 +8,7 @@ import static com.gumillea.inlandport.core.util.utils.CompatUtil.itemTag;
 
 public class IPItemTags {
     public static final TagKey<Item> KNIVES = itemTag("tools/knife");
+    public static final TagKey<Item> MOSS = itemTag("moss");
 
     public static final TagKey<Item> BEETROOT = cropTag("beetroot");
     public static final TagKey<Item> CARROT = cropTag("carrot");
@@ -28,6 +29,7 @@ public class IPItemTags {
     public static final TagKey<Item> COFFEE = drinkTag("coffee");
     public static final TagKey<Item> TEA = drinkTag("tea");
     public static final TagKey<Item> SYRUP = drinkTag("syrup");
+    public static final TagKey<Item> MILK_BOTTLE = drinkTag("milk/bottle");
 
     public static final TagKey<Item> SWEETS = itemTag(IPCompat.FD, "sweets");
 

@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class IPBlockTagsProvider extends BlockTagsProvider {
-    private final String modId;
+    protected final String modId;
 
     public IPBlockTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, String modId, @Nullable ExistingFileHelper helper) {
         super(output, provider, modId, helper);
@@ -45,6 +45,13 @@ public abstract class IPBlockTagsProvider extends BlockTagsProvider {
         }
     }
 
+    @SafeVarargs
+    public final void addIfExist(TagKey<Block> tagKey, TagKey<Block>... tagKeys) {
+        for (TagKey<Block> newTagKey : tagKeys) {
+            tag(tagKey).addTag(newTagKey);
+        }
+    }
+
     public void addStoneFamily(StoneBaseBlock family) {
         this.addIfExist(Tags.Blocks.STONES, family);
         for (Block block : Variant.getAllBlocks(family, StoneBaseBlock.REG_MAP)) {
@@ -60,9 +67,13 @@ public abstract class IPBlockTagsProvider extends BlockTagsProvider {
         TagKey<Block> logs = family.getLogsBlockTag();
 
         this.addIfExist(logs, log, strippedLog, wood, strippedWood);
-        this.tag(BlockTags.LOGS).addTag(logs);
+        if (!logs.location().getPath().equals("airs")) this.tag(BlockTags.LOGS).addTag(logs);
         this.addIfExist(Tags.Blocks.STRIPPED_LOGS, strippedLog);
         this.addIfExist(Tags.Blocks.STRIPPED_WOODS, strippedWood);
+
+        if (log != null && log.defaultBlockState().ignitedByLava()) {
+            this.addIfExist(BlockTags.LOGS_THAT_BURN, logs);
+        }
 
         this.addIfExist(BlockTags.PLANKS, family);
 

@@ -1,6 +1,6 @@
 package com.gumillea.inlandport.common.recipe;
 
-import com.gumillea.inlandport.core.api.record.BlockInteractInput;
+import com.gumillea.inlandport.core.api.record.recipe.BlockInteractInput;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,13 +17,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class BlockInteractRecipe implements Recipe<BlockInteractInput> {
-    private final RecipeType<?> type;
-    private final RecipeSerializer<?> serializer;
-    private final String group;
-    private final BlockState state;
-    private final Ingredient ingredient;
-    private final ItemStack result;
-    private final boolean isStrict;
+    protected final RecipeType<?> type;
+    protected final RecipeSerializer<?> serializer;
+    protected final String group;
+    protected final BlockState state;
+    protected final Ingredient ingredient;
+    protected final ItemStack result;
+    protected final boolean isStrict;
 
     public BlockInteractRecipe(RecipeType<?> type, RecipeSerializer<?> serializer, String group, BlockState state, Ingredient ingredient, ItemStack result, boolean isStrict) {
         this.type = type;

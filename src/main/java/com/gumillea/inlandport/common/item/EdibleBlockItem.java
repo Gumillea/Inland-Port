@@ -20,7 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class EdibleBlockItem extends BlockItem {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         int setting = InlandPortConfig.Common.PLACEABLE_FOOD_SETTING.get();
 
         if (setting == 2) {
@@ -41,7 +40,7 @@ public class EdibleBlockItem extends BlockItem {
         return super.use(level, player, hand);
     }
 
-    public @NotNull InteractionResult place(BlockPlaceContext context) {
+    public InteractionResult place(BlockPlaceContext context) {
         Player player = context.getPlayer();
         int setting = InlandPortConfig.Common.PLACEABLE_FOOD_SETTING.get();
         ItemStack stack = new ItemStack(this);

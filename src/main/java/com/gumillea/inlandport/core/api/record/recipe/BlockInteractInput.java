@@ -1,4 +1,4 @@
-package com.gumillea.inlandport.core.api.record;
+package com.gumillea.inlandport.core.api.record.recipe;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;

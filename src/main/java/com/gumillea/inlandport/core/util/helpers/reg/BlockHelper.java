@@ -178,13 +178,13 @@ public class BlockHelper {
                             case STANDING_SIGN -> {
                                 BiFunction<DeferredHolder<Block, B>, BlockBehaviour.Properties, Block> standingFactory = regMap.get(Variant.STANDING_SIGN);
                                 BiFunction<DeferredHolder<Block, B>, BlockBehaviour.Properties, Block> wallFactory = regMap.get(Variant.WALL_SIGN);
-                                Pair<DeferredHolder<Block, ? extends Block>, DeferredHolder<Block, ? extends Block>> sign = regSignBlocks(basename, () -> standingFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())), () -> wallFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())));
+                                Pair<DeferredHolder<Block, ? extends Block>, DeferredHolder<Block, ? extends Block>> sign = regSignBlocks(basename, () -> standingFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())), () -> wallFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get()).forceSolidOn().noCollission()));
                                 regSignItem(variantName, sign);
                             }
                             case HANGING_SIGN -> {
                                 BiFunction<DeferredHolder<Block, B>, BlockBehaviour.Properties, Block> standingFactory = regMap.get(Variant.HANGING_SIGN);
                                 BiFunction<DeferredHolder<Block, B>, BlockBehaviour.Properties, Block> wallFactory = regMap.get(Variant.HANGING_WALL_SIGN);
-                                Pair<DeferredHolder<Block, ? extends Block>, DeferredHolder<Block, ? extends Block>> sign = regHangingSignBlocks(basename, () -> standingFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())), () -> wallFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())));
+                                Pair<DeferredHolder<Block, ? extends Block>, DeferredHolder<Block, ? extends Block>> sign = regHangingSignBlocks(basename, () -> standingFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get())), () -> wallFactory.apply(baseBlock, BlockBehaviour.Properties.ofFullCopy(baseBlock.get()).forceSolidOn().noCollission()));
                                 regHangingSignItem(variantName, sign);
                             }
                             default -> {

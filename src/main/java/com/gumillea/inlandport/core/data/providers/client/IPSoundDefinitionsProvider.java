@@ -13,9 +13,9 @@ import java.util.Set;
 
 public abstract class IPSoundDefinitionsProvider extends SoundDefinitionsProvider {
 
-    private final String modId;
-    private final Set<String> keys = new HashSet<>();
-    private boolean isAutoGenerating = false;
+    protected final String modId;
+    protected final Set<String> keys = new HashSet<>();
+    protected boolean isAutoGenerating = false;
 
     public IPSoundDefinitionsProvider(PackOutput output, String modId, ExistingFileHelper helper) {
         super(output, modId, helper);

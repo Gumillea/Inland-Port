@@ -109,7 +109,7 @@ public class IPClientEvents {
 
     private static IClientFluidTypeExtensions create(String modId, String texture) {
         String path = "block/fluid/" + texture;
-        ResourceLocation stillTexture = IPUtil.loc(modId, path);
+        ResourceLocation stillTexture = IPUtil.loc(modId, path.replace("_fluid", ""));
         ResourceLocation flowingTexture = IPUtil.loc(modId, path + "_flow");
         return new IClientFluidTypeExtensions() {
             @Override

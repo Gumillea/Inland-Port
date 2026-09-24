@@ -20,7 +20,10 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 public class CompatUtil {
     public static boolean mod(String mod) {
@@ -36,6 +39,10 @@ public class CompatUtil {
         return BuiltInRegistries.FLUID.get(IPUtil.loc(modId, path));
     }
 
+    public static FluidType fluidType(String modId, String path) {
+        return NeoForgeRegistries.FLUID_TYPES.get(IPUtil.loc(modId, path));
+    }
+
     public static Fluid getFluid(FluidType type) {
         ResourceLocation key = RegUtil.key(type);
         return fluid(key.getNamespace(), key.getPath());
@@ -45,7 +52,6 @@ public class CompatUtil {
         Item item = BuiltInRegistries.ITEM.get(IPUtil.loc(modId, path));
         return item == Blocks.AIR.asItem() ? null : item;
     }
-
 
     public static Item fDItem(String path) {
         return item(IPCompat.FD, path);
@@ -125,8 +131,16 @@ public class CompatUtil {
         return isEmptyExcept(BuiltInRegistries.BLOCK, tagKey, block);
     }
 
+    public static boolean isBlockTagEmptyExcept(TagKey<Block> tagKey, Supplier<Block> block) {
+        return isBlockTagEmptyExcept(tagKey, block.get());
+    }
+
     public static boolean isItemTagEmptyExcept(TagKey<Item> tagKey, Item item) {
         return isEmptyExcept(BuiltInRegistries.ITEM, tagKey, item);
+    }
+
+    public static boolean isItemTagEmptyExcept(TagKey<Item> tagKey, Supplier<Item> item) {
+        return isItemTagEmptyExcept(tagKey, item.get());
     }
 
     public static boolean isPresent(ResourceLocation location) {

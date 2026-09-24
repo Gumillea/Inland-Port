@@ -98,6 +98,8 @@ dependencies {
 
     implementation "curse.maven:farmers-delight-398521:8083481"
     implementation "curse.maven:cooks-collection-1222140:8572463"
+
+    implementation "curse.maven:create-328085:7963363"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

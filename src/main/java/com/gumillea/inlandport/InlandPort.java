@@ -18,6 +18,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import org.slf4j.Logger;
@@ -39,7 +40,11 @@ public class InlandPort {
         IPAttributes.HELPER.register(bus);
         IPSoundEvents.HELPER.register(bus);
         IPItems.HELPER.register(bus);
+        IPRecipes.HELPER.register(bus);
         IPConditions.CONDITION_CODECS.register(bus);
+
+        NeoForgeMod.enableMilkFluid();
+        NeoForgeMod.enableMergedAttributeTooltips();
 
         bus.addListener(this::commonSetup);
         bus.addListener(this::clientSetup);
@@ -72,6 +77,7 @@ public class InlandPort {
         generator.addProvider(server, new TestDamageTypeTagsProvider(output, provider, helper));
 
         generator.addProvider(server, new TestLootModifierProvider(output, provider));
+        generator.addProvider(server, new TestRecipeProvider(output, provider));
 
         boolean client = event.includeClient();
         generator.addProvider(client, new TestLanguageProvider(output));

@@ -18,9 +18,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
 import net.neoforged.neoforge.common.loot.AddTableLootModifier;
@@ -36,10 +38,10 @@ import java.util.concurrent.CompletableFuture;
 import static com.gumillea.inlandport.core.util.utils.LootTableUtil.*;
 
 public abstract class IPLootModifierProvider extends GlobalLootModifierProvider {
-    private final PackOutput output;
-    private final String modId;
-    private final HolderLookup.Provider provider;
-    private final Map<ResourceLocation, LootTable> map = new LinkedHashMap<>();
+    protected final PackOutput output;
+    protected final String modId;
+    protected final HolderLookup.Provider provider;
+    protected final Map<ResourceLocation, LootTable> map = new LinkedHashMap<>();
 
     public IPLootModifierProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, String modId) {
         super(output, future, modId);
@@ -69,7 +71,11 @@ public abstract class IPLootModifierProvider extends GlobalLootModifierProvider 
         inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootItemRandomChanceCondition.randomChance(chance)).add(LootItem.lootTableItem(item))), conditions);
     }
 
-    protected void injectWithFortune(Item item, Object target, float[] chances, ICondition... conditions) {
+    protected void inject(Item item, Object target, int min, int max, ICondition... conditions) {
+        inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootTableUtil.hasSilkTouch(provider).invert()).apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max))).add(LootItem.lootTableItem(item))), conditions);
+    }
+
+    protected void injectWithFortuneChance(Item item, Object target, float[] chances, ICondition... conditions) {
         inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootTableUtil.hasSilkTouch(provider).invert()).when(fortuneChances(provider, chances)).add(LootItem.lootTableItem(item))), conditions);
     }
 

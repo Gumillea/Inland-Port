@@ -21,21 +21,21 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class BlockInteractRecipeBuilder implements RecipeBuilder {
-    private final RecipeCategory category;
-    private final Item result;
-    private final Ingredient ingredient;
-    private final int count;
-    private BlockState state;
-    private boolean isStrict = false;
-    private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
+    protected final RecipeCategory category;
+    protected final Item result;
+    protected final Ingredient ingredient;
+    protected final int count;
+    protected BlockState state;
+    protected boolean isStrict = false;
+    protected final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
     @Nullable
-    private String group;
+    protected String group;
     @Nullable
-    private BlockInteractRecipe.Factory<?> factory;
+    protected BlockInteractRecipe.Factory<?> factory;
     @Nullable
-    private BlockInteractRecipe.SimpleFactory<?> simpleFactory;
+    protected BlockInteractRecipe.SimpleFactory<?> simpleFactory;
 
-    private BlockInteractRecipeBuilder(RecipeCategory category, @Nullable BlockInteractRecipe.Factory<?> factory, BlockState state, Ingredient ingredient, ItemLike result, int count, boolean isStrict) {
+    protected BlockInteractRecipeBuilder(RecipeCategory category, @Nullable BlockInteractRecipe.Factory<?> factory, BlockState state, Ingredient ingredient, ItemLike result, int count, boolean isStrict) {
         this.category = category;
         this.factory = factory;
         this.state = state;
@@ -45,7 +45,7 @@ public class BlockInteractRecipeBuilder implements RecipeBuilder {
         this.isStrict = isStrict;
     }
 
-    private BlockInteractRecipeBuilder(RecipeCategory category, @Nullable BlockInteractRecipe.SimpleFactory<?> simpleFactory, Ingredient ingredient, ItemLike result, int count) {
+    protected BlockInteractRecipeBuilder(RecipeCategory category, @Nullable BlockInteractRecipe.SimpleFactory<?> simpleFactory, Ingredient ingredient, ItemLike result, int count) {
         this.category = category;
         this.simpleFactory = simpleFactory;
         this.ingredient = ingredient;
