@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -30,6 +32,11 @@ public class LootTableUtil {
     public static LootItemCondition.Builder hasTool(ItemLike item) {
         return MatchTool.toolMatches(ItemPredicate.Builder.item().of(item));
     }
+
+    public static LootItemCondition.Builder hasTool(TagKey<Item> item) {
+        return MatchTool.toolMatches(ItemPredicate.Builder.item().of(item));
+    }
+
 
     public static LootItemCondition.Builder hasSilkTouch(HolderLookup.Provider provider) {
         return hasEnchantment(provider, Enchantments.SILK_TOUCH);

@@ -42,6 +42,7 @@ public class InlandPort {
         IPItems.HELPER.register(bus);
         IPRecipes.HELPER.register(bus);
         IPConditions.CONDITION_CODECS.register(bus);
+        IPLootModifiers.HELPER.register(bus);
 
         NeoForgeMod.enableMilkFluid();
         NeoForgeMod.enableMergedAttributeTooltips();
