@@ -35,6 +35,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
@@ -447,6 +448,75 @@ public abstract class IPRecipeProvider extends RecipeProvider {
         cuttingRecipe(output, result, 1, chance, object, tool, modIds, null);
     }
 
+    //Smithing
+    public void noTemplateSmithing(RecipeOutput output, Object ingredient, Object addition, ItemLike result, @Nullable String... modIds) {
+        smithingRecipe(output, null, ingredient, addition, result, 1,  modIds);
+    }
+
+    public void simpleSmithing(RecipeOutput output, ItemLike template, Object ingredient, Object addition, ItemLike result, @Nullable String... modIds) {
+        smithingRecipe(output, template, ingredient, addition, result, 1,  modIds);
+    }
+
+    public void alloySmithing(RecipeOutput output, @Nullable String alter, ItemLike template, ItemLike ingredient, ItemLike alloy, @Nullable String... modIds) {
+        alloyTools(output, alter, template, ingredient, alloy, modIds);
+        alloyArmors(output, alter, template, ingredient, alloy, modIds);
+    }
+
+    public void alloySmithing(RecipeOutput output, ItemLike template, ItemLike ingredient, ItemLike alloy, @Nullable String... modIds){
+        alloySmithing(output, null, template, ingredient, alloy, modIds);
+    }
+
+    public void alloyTools(RecipeOutput output, @Nullable String alter, ItemLike template, ItemLike ingredient, ItemLike alloy, @Nullable String... modIds) {
+        String baseName = RegUtil.path(ingredient).replace("_alloy", "").replace("_ingot", "");
+        String alloyName = RegUtil.path(alloy).replace("_alloy", "").replace("_ingot", "");
+        String modIdd = RegUtil.key(ingredient).getNamespace();
+
+        Item sword = CompatUtil.item(modId, alloyName + "_sword");
+        Item swordB = CompatUtil.item(modIdd, baseName + "_sword");
+        Item shovel = CompatUtil.item(modId, alloyName + "_shovel");
+        Item shovelB = CompatUtil.item(modIdd, baseName + "_shovel");
+        Item axe = CompatUtil.item(modId, alloyName + "_axe");
+        Item axeB = CompatUtil.item(modIdd, baseName + "_axe");
+        Item pickaxe = CompatUtil.item(modId, alloyName + "_pickaxe");
+        Item pickaxeB = CompatUtil.item(modIdd, baseName + "_pickaxe");
+        Item hoe = CompatUtil.item(modId, alloyName + "_hoe");
+        Item hoeB = CompatUtil.item(modIdd, baseName + "_hoe");
+
+        if (sword != null) smithingRecipe(output, template, swordB != null ? swordB : CompatUtil.item(alter, baseName + "_sword"), alloy, sword, 1, modIds);
+        if (shovel != null) smithingRecipe(output, template, shovelB != null ? shovelB : CompatUtil.item(alter, baseName + "_shovel"), alloy, shovel, 1, modIds);
+        if (axe != null) smithingRecipe(output, template, axeB != null ? axeB : CompatUtil.item(alter, baseName + "_axe"), alloy, axe, 1, modIds);
+        if (pickaxe != null) smithingRecipe(output, template, pickaxeB != null ? pickaxeB : CompatUtil.item(alter, baseName + "_pickaxe"), alloy, pickaxe, 1, modIds);
+        if (hoe != null) smithingRecipe(output, template, hoeB != null ? hoeB : CompatUtil.item(alter, baseName + "_hoe"), alloy, hoe, 1, modIds);
+    }
+
+    public void alloyTools(RecipeOutput output, ItemLike template, ItemLike ingredient, ItemLike alloy, @Nullable String... modIds){
+        alloyTools(output, null, template, ingredient, alloy, modIds);
+    }
+
+    public void alloyArmors(RecipeOutput output, @Nullable String alter, ItemLike template, ItemLike ingredient, ItemLike alloy, @Nullable String... modIds) {
+        String baseName = RegUtil.path(ingredient).replace("_alloy", "").replace("_ingot", "");
+        String alloyName = RegUtil.path(alloy).replace("_alloy", "").replace("_ingot", "");
+        String modIdd = RegUtil.key(ingredient).getNamespace();
+
+        Item helmet = CompatUtil.item(modId, alloyName + "_helmet");
+        Item helmetB = CompatUtil.item(modIdd, baseName + "_helmet");
+        Item chestplate = CompatUtil.item(modId, alloyName + "_chestplate");
+        Item chestplateB = CompatUtil.item(modIdd, baseName + "_chestplate");
+        Item leggings = CompatUtil.item(modId, alloyName + "_leggings");
+        Item leggingsB = CompatUtil.item(modIdd, baseName + "_leggings");
+        Item boots = CompatUtil.item(modId, alloyName + "_boots");
+        Item bootsB = CompatUtil.item(modIdd, baseName + "_boots");
+
+        if (helmet != null) smithingRecipe(output, template, helmetB != null ? helmetB : CompatUtil.item(alter, baseName + "_helmet"), alloy, helmet, 1, modIds);
+        if (chestplate != null) smithingRecipe(output, template, chestplateB != null ? chestplateB : CompatUtil.item(alter, baseName + "_chestplate"), alloy, chestplate, 1, modIds);
+        if (leggings != null) smithingRecipe(output, template, leggingsB != null ? leggingsB : CompatUtil.item(alter, baseName + "_leggings"), alloy, leggings, 1, modIds);
+        if (boots != null) smithingRecipe(output, template, bootsB != null ? bootsB : CompatUtil.item(alter, baseName + "_boots"), alloy, boots, 1, modIds);
+    }
+
+    public void alloyArmors(RecipeOutput output, ItemLike template, ItemLike ingredient, ItemLike alloy, @Nullable String... modIds){
+        alloyArmors(output, null, template, ingredient, alloy, modIds);
+    }
+
     //Fluid
     public void fluidRecipe(RecipeOutput output, ItemStack result, Object fluid, int amount, ItemStack object, @Nullable String... modIds) {
         injectingRecipe(output, result, fluid, amount, object, modIds);
@@ -508,6 +578,41 @@ public abstract class IPRecipeProvider extends RecipeProvider {
     }
 
     //Shaped
+    public void toolsRecipe(RecipeOutput output, ItemLike ingredient, String... modIds) {
+        String baseName = RegUtil.path(ingredient).replace("_alloy", "").replace("_ingot", "");
+        String modIdd = RegUtil.key(ingredient).getNamespace();
+
+        Item sword = CompatUtil.item(modIdd, baseName + "_sword");
+        Item shovel = CompatUtil.item(modIdd, baseName + "_shovel");
+        Item axe = CompatUtil.item(modIdd, baseName + "_axe");
+        Item pickaxe = CompatUtil.item(modIdd, baseName + "_pickaxe");
+        Item hoe = CompatUtil.item(modIdd, baseName + "_hoe");
+
+        if (sword != null) shapedRecipe(output, RecipeCategory.COMBAT, sword, 1, new String[]{" # ", " # ", " s "}, Map.of('#', ingredient, 's', Items.STICK), modIds);
+        if (shovel != null) shapedRecipe(output, RecipeCategory.COMBAT, shovel, 1, new String[]{" # ", " s ", " s "}, Map.of('#', ingredient, 's', Items.STICK), modIds);
+        if (axe != null) shapedRecipe(output, RecipeCategory.COMBAT, axe, 1, new String[]{"## ", "#s ", " s "}, Map.of('#', ingredient, 's', Items.STICK), modIds);
+        if (pickaxe != null) shapedRecipe(output, RecipeCategory.COMBAT, pickaxe, 1, new String[]{"###", " s ", " s "}, Map.of('#', ingredient, 's', Items.STICK), modIds);
+        if (hoe != null) shapedRecipe(output, RecipeCategory.COMBAT, hoe, 1, new String[]{"## ", " s ", " s "}, Map.of('#', ingredient, 's', Items.STICK), modIds);
+    }
+
+    public void armorsRecipe(RecipeOutput output, ItemLike ingredient, String... modIds) {
+        String baseName = RegUtil.path(ingredient).replace("_alloy", "").replace("_ingot", "");
+        String modIdd = RegUtil.key(ingredient).getNamespace();
+
+        modIdd = modIdd.equals("minecraft") ? modId : modIdd;
+
+        Item helmet = CompatUtil.item(modIdd, baseName + "_helmet");
+        Item chestplate = CompatUtil.item(modIdd, baseName + "_chestplate");
+        Item leggings = CompatUtil.item(modIdd, baseName + "_leggings");
+        Item boots = CompatUtil.item(modIdd, baseName + "_boots");
+
+        if (helmet != null) shapedRecipe(output, RecipeCategory.COMBAT, helmet, 1, new String[]{"###", "# #"}, Map.of('#', ingredient), modIds);
+        if (chestplate != null) shapedRecipe(output, RecipeCategory.COMBAT, chestplate, 1, new String[]{"# #", "###", "###"}, Map.of('#', ingredient), modIds);
+        if (leggings != null) shapedRecipe(output, RecipeCategory.COMBAT, leggings, 1, new String[]{"###", "# #", "# #"}, Map.of('#', ingredient), modIds);
+        if (boots != null) shapedRecipe(output, RecipeCategory.COMBAT, boots, 1, new String[]{"# #", "# #"}, Map.of('#', ingredient), modIds);
+    }
+
+
     public void magicAppleRecipe(RecipeOutput output, ItemLike result, int count, Object ingredient, String... modIds) {
         magicFoodRecipe(output, result, count, ingredient, Items.APPLE, modIds);
     }
@@ -643,6 +748,11 @@ public abstract class IPRecipeProvider extends RecipeProvider {
 
     public void injectingRecipe(RecipeOutput output, ItemLike result, int count, Object fluid, int amount, Object object, @Nullable String... modIds) {
         injectingRecipe(output, RegUtil.stack(result, count), fluid instanceof Fluid fluidd ? fluidd : CompatUtil.getFluid((FluidType) fluid), amount, toIngredient(object), modIds);
+    }
+
+    public void smithingRecipe(RecipeOutput output, ItemLike template, Object ingredient, Object addition, ItemLike result, int count, @Nullable String... modIds) {
+        template = template != null ? template : Items.STICK;
+        output.accept(IPUtil.loc(modId, "smithing/" + RegUtil.path(result.asItem())), new SmithingTransformRecipe(Ingredient.of(template), toIngredient(ingredient), toIngredient(addition), RegUtil.stack(result.asItem(), count)), null, toConds(result, modIds, template, ingredient, addition));
     }
 
     public void stonecuttingRecipe(RecipeOutput output, RecipeCategory category, ItemLike result, int count, Object object, @Nullable String... modIds) {
@@ -841,7 +951,7 @@ public abstract class IPRecipeProvider extends RecipeProvider {
     }
 
     public void overrideBlasting(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object, String path) {
-        overrideRecipe(output, SimpleCookingRecipeBuilder.blasting(toIngredient(object), category, result, exp, IPUtil.secondsToTicks(seconds)), b -> {}, path + "_from_blasting", result, object);
+        overrideRecipe(output, SimpleCookingRecipeBuilder.blasting(toIngredient(object), category, result, exp, IPUtil.secondsToTicks(seconds)), b -> {}, path, result, object);
     }
 
     public void overrideBlasting(RecipeOutput output, RecipeCategory category, ItemLike result, float exp, float seconds, Object object) {
@@ -921,14 +1031,6 @@ public abstract class IPRecipeProvider extends RecipeProvider {
                 resultKey = RegUtil.key(stack.getItem());
                 resultPath = RegUtil.path(stack.getItem());
             }
-            case Fluid fluid -> {
-                resultKey = RegUtil.key(fluid);
-                resultPath = RegUtil.path(fluid);
-            }
-            case FluidStack stack -> {
-                resultKey = RegUtil.key(stack.getFluid());
-                resultPath = RegUtil.path(stack.getFluid());
-            }
             default -> throw new IllegalStateException("Unexpected value: " + result);
         }
         for (Object object : objects) {
@@ -946,6 +1048,26 @@ public abstract class IPRecipeProvider extends RecipeProvider {
                     TagKey<Item> tag = (TagKey<Item>) tagKey;
                     if (isNewCond(tag) && !tagUnlocks.contains(tag)) conditions.add(new NotCondition(new TagEmptyCondition(tag.location())));
                     tagUnlocks.add(tag);
+                }
+                case Ingredient ingredient -> {
+                    if (ingredient.isCustom()) {
+                        break;
+                    }
+
+                    for (Ingredient.Value value : ingredient.getValues()) {
+                        switch (value) {
+                            case Ingredient.ItemValue(ItemStack item) -> {
+                                ItemLike itemm = item.getItem();
+                                if (isNewCond(itemm) && !itemUnlocks.contains(itemm)) conditions.add(new NotDisabledCondition(RegUtil.key(itemm.asItem())));
+                                itemUnlocks.add(itemm);
+                            }
+                            case Ingredient.TagValue(TagKey<Item> tag) -> {
+                                if (isNewCond(tag)&& !tagUnlocks.contains(tag)) conditions.add(new NotCondition(new TagEmptyCondition(tag.location())));
+                                tagUnlocks.add(tag);
+                            }
+                            default -> {}
+                        }
+                    }
                 }
                 default -> {}
             }

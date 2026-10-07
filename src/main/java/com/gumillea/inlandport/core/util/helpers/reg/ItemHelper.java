@@ -2,19 +2,20 @@ package com.gumillea.inlandport.core.util.helpers.reg;
 
 import com.gumillea.inlandport.common.item.ContainerFoodItem;
 import com.gumillea.inlandport.common.item.FoodItem;
+import com.gumillea.inlandport.common.item.IPArmorItem;
 import com.gumillea.inlandport.common.item.RecordItem;
 import com.gumillea.inlandport.core.api.record.RegConditions;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ItemHelper {
@@ -41,6 +42,37 @@ public class ItemHelper {
 
     public DeferredHolder<Item, Item> reg(String name, Supplier<Item> supplier) {
         return RegHelper.reg(itemReg, name, supplier, () -> new Item(new Item.Properties()), null);
+    }
+
+    public DeferredHolder<Item, Item> regAxeItem(String name, Item.Properties properties, Tier tier, int damage, float attackSpeed, RegConditions conditions) {
+        return reg(name, () -> new AxeItem(tier, properties.attributes(AxeItem.createAttributes(tier, damage, attackSpeed))), conditions);
+    }
+
+    public DeferredHolder<Item, Item> regSwordItem(String name, Item.Properties properties, Tier tier, int damage, float attackSpeed, RegConditions conditions) {
+        return reg(name, () -> new SwordItem(tier, properties.attributes(SwordItem.createAttributes(tier, damage, attackSpeed))), conditions);
+    }
+
+    public DeferredHolder<Item, Item> regShovelItem(String name, Item.Properties properties, Tier tier, int damage, float attackSpeed, RegConditions conditions) {
+        return reg(name, () -> new ShovelItem(tier, properties.attributes(ShovelItem.createAttributes(tier, damage, attackSpeed))), conditions);
+    }
+
+    public DeferredHolder<Item, Item> regPickaxeItem(String name, Item.Properties properties, Tier tier, int damage, float attackSpeed, RegConditions conditions) {
+        return reg(name, () -> new PickaxeItem(tier, properties.attributes(PickaxeItem.createAttributes(tier, damage, attackSpeed))), conditions);
+    }
+
+    public DeferredHolder<Item, Item> regHoeItem(String name, Item.Properties properties, Tier tier, int damage, float attackSpeed, RegConditions conditions) {
+        return reg(name, () -> new HoeItem(tier, properties.attributes(HoeItem.createAttributes(tier, damage, attackSpeed))), conditions);
+    }
+
+    public DeferredHolder<Item, Item> regArmors(String name, Item.Properties properties, DeferredHolder<ArmorMaterial, ArmorMaterial> material, int[] durability, Consumer<ItemAttributeModifiers.Builder> consumer, RegConditions conditions) {
+        reg(name + "_helmet", () -> new IPArmorItem(name, modId, material, ArmorItem.Type.HELMET, properties.durability(durability[0]), consumer), conditions);
+        reg(name + "_chestplate", () -> new IPArmorItem(name, modId, material, ArmorItem.Type.CHESTPLATE, properties.durability(durability[1]), consumer), conditions);
+        reg(name + "_leggings", () -> new IPArmorItem(name, modId, material, ArmorItem.Type.LEGGINGS, properties.durability(durability[2]), consumer), conditions);
+        return reg(name + "_boots", () -> new IPArmorItem(name, modId, material, ArmorItem.Type.BOOTS, properties.durability(durability[3]), consumer), conditions);
+    }
+
+    public DeferredHolder<Item, Item> regArmors(String name, Item.Properties properties, DeferredHolder<ArmorMaterial, ArmorMaterial> material, int[] durability, RegConditions conditions) {
+        return regArmors(name,  properties, material, durability, null, conditions);
     }
 
     public DeferredHolder<Item, Item> regFood(String name, Item.Properties properties, FoodItem.Type type, String tooltip, Object[] styles, RegConditions conditions) {
@@ -127,4 +159,5 @@ public class ItemHelper {
     public DeferredHolder<Item, Item> regRecord(String name, Item.Properties properties) {
         return regRecord(name, properties, Rarity.RARE, null);
     }
+
 }

@@ -1,8 +1,9 @@
 package com.gumillea.inlandport.core.data.modifiers;
 
 import com.gumillea.inlandport.InlandPort;
+import com.gumillea.inlandport.common.loot.modifier.ReplaceItemLootModifier;
 import com.gumillea.inlandport.core.api.NotDisabledCondition;
-import com.gumillea.inlandport.common.loot.modifier.ReplaceTableLootTableModifier;
+import com.gumillea.inlandport.common.loot.modifier.ReplaceTableLootModifier;
 import com.gumillea.inlandport.core.util.utils.IPUtil;
 import com.gumillea.inlandport.core.util.utils.LootTableUtil;
 import com.gumillea.inlandport.core.util.utils.RegUtil;
@@ -16,6 +17,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
@@ -58,18 +60,18 @@ public abstract class IPLootModifierProvider extends GlobalLootModifierProvider 
         List<LootItemCondition> list = new ArrayList<>();
         list.add(LootTableIdCondition.builder(getLoc(target)).build());
 
-        add("disable_" + RegUtil.getBaseName(getLoc(target).getPath()), new ReplaceTableLootTableModifier(list.toArray(LootItemCondition[]::new), ResourceKey.create(Registries.LOOT_TABLE, EMPTY)), conditions);
+        add("disable_" + RegUtil.getBaseName(getLoc(target).getPath()), new ReplaceTableLootModifier(list.toArray(LootItemCondition[]::new), ResourceKey.create(Registries.LOOT_TABLE, EMPTY)), conditions);
     }
 
     protected void replaceTable(String name, Object target, LootItemCondition[] replaceCond, LootTable.Builder builder, ICondition... conditions) {
-        ResourceLocation path = IPUtil.loc(modId, "replace_table/" + name);
+        ResourceLocation path = IPUtil.loc(modId, "replace/table/" + name);
         String targetPath = getLoc(target).getPath();
         map.put(path, builder.build());
 
         List<LootItemCondition> list = new ArrayList<>(Arrays.stream(replaceCond).toList());
         list.add(LootTableIdCondition.builder(getLoc(target)).build());
 
-        add("replace_" + RegUtil.getBaseName(targetPath) + "_with_" + name, new ReplaceTableLootTableModifier(list.toArray(LootItemCondition[]::new), ResourceKey.create(Registries.LOOT_TABLE, path)), conditions);
+        add("replace_" + RegUtil.getBaseName(targetPath) + "_with_" + name, new ReplaceTableLootModifier(list.toArray(LootItemCondition[]::new), ResourceKey.create(Registries.LOOT_TABLE, path)), conditions);
     }
 
     protected void replaceTableByLocation(String name, Object target, LocationPredicate.Builder predicate, LootTable.Builder builder, ICondition... conditions) {
@@ -79,6 +81,25 @@ public abstract class IPLootModifierProvider extends GlobalLootModifierProvider 
     protected void replaceTableByBiome(String name, Object target, Object biome, LootTable.Builder builder, ICondition... conditions) {
         LocationPredicate.Builder predicate = biome instanceof TagKey<?> tagKey ? LocationPredicate.Builder.location().setBiomes(provider.lookupOrThrow(Registries.BIOME).getOrThrow((TagKey<Biome>) tagKey)) : LocationPredicate.Builder.inBiome(provider.lookupOrThrow(Registries.BIOME).getOrThrow((ResourceKey<Biome>) biome));
         replaceTableByLocation(name, target, predicate, builder, conditions);
+    }
+
+    protected void replaceItem(Object target, Item targetItem, Item replacement, LootItemCondition[] replaceCond, ICondition... conditions) {
+        String targetPath = getLoc(target).getPath();
+
+        List<LootItemCondition> list = new ArrayList<>(Arrays.stream(replaceCond).toList());
+        list.add(LootTableIdCondition.builder(getLoc(target)).build());
+
+        add("replace_" + RegUtil.path(targetItem) + "_with_" + RegUtil.path(replacement) + "_in_" + RegUtil.getBaseName(targetPath), new ReplaceItemLootModifier(list.toArray(LootItemCondition[]::new), ResourceKey.create(Registries.ITEM, RegUtil.key(targetItem)), ResourceKey.create(Registries.ITEM, RegUtil.key(replacement))), conditions);
+    }
+
+    protected void replaceItem(Object target, Item targetItem, Item replacement, ICondition... conditions) {
+        replaceItem(target, targetItem, replacement, new LootItemCondition[]{}, conditions);
+    }
+
+    protected void replaceItems(Object target, Item[] targetItems, Item replacement, ICondition... conditions) {
+        for (Item item : targetItems) {
+            replaceItem(target, item, replacement, new LootItemCondition[]{}, conditions);
+        }
     }
 
     protected void inject(String name, Object target, LootTable.Builder builder, ICondition... conditions) {
@@ -108,6 +129,10 @@ public abstract class IPLootModifierProvider extends GlobalLootModifierProvider 
 
     protected void inject(Item item, Object target, int min, int max, ICondition... conditions) {
         inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(LootTableUtil.hasSilkTouch(provider).invert()).apply(SetItemCountFunction.setCount(UniformGenerator.between(min, max))).add(LootItem.lootTableItem(item))), conditions);
+    }
+
+    protected void inject(Item item, Object target, ICondition... conditions) {
+        inject(item, target, LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(LootItem.lootTableItem(item))), conditions);
     }
 
     protected void inject(Item item, Object[] targets, int min, int max, ICondition... conditions) {
@@ -180,16 +205,22 @@ public abstract class IPLootModifierProvider extends GlobalLootModifierProvider 
         });
     }
 
-    private ResourceLocation getLoc(Object object) {
+    protected ResourceLocation getLoc(Object object) {
         switch (object) {
             case Block block -> {
                 ResourceLocation location = RegUtil.key(block);
                 return IPUtil.loc(location.getNamespace(), "blocks/" + location.getPath());
             }
+            case EntityType<?> entityType -> {
+                return entityType.getDefaultLootTable().location();
+            }
             case ResourceLocation location -> {
                 return location;
             }
             case ResourceKey<?> key -> {
+                return key.location();
+            }
+            case TagKey<?> key -> {
                 return key.location();
             }
             default -> throw new IllegalStateException("Unexpected value: " + object);

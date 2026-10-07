@@ -29,14 +29,23 @@ public class IPItemTags {
     public static final TagKey<Item> COFFEE = drinkTag("coffee");
     public static final TagKey<Item> TEA = drinkTag("tea");
     public static final TagKey<Item> SYRUP = drinkTag("syrup");
+    public static final TagKey<Item> JAM = drinkTag("jam");
     public static final TagKey<Item> MILK_BOTTLE = drinkTag("milk/bottle");
 
     public static final TagKey<Item> SWEETS = itemTag(IPCompat.FD, "sweets");
+    public static final TagKey<Item> SNACKS = itemTag(IPCompat.FD, "snacks");
+    public static final TagKey<Item> MEALS = itemTag(IPCompat.FD, "meals");
+
+    public static final TagKey<Item> CURIOS_HEAD = curiosTag("head");
+
+    public static TagKey<Item> curiosTag(String name) {
+        return itemTag("curios", name);
+    }
 
     public static TagKey<Item> cropTag(String name) {
         return itemTag(null, "crops/" + name);
     }
-    
+
     public static TagKey<Item> foodTag(String name) {
         return itemTag(null, "foods/" + name);
     }

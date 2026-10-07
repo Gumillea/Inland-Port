@@ -3,12 +3,15 @@ package com.gumillea.inlandport.core.util.helpers;
 import com.gumillea.inlandport.common.block.EdibleBlock;
 import com.gumillea.inlandport.common.block.StickyBlock;
 import com.gumillea.inlandport.common.block.StorageBlock;
+import com.gumillea.inlandport.common.block.crop.Age3Block;
+import com.gumillea.inlandport.common.block.crop.Age7Block;
 import com.gumillea.inlandport.common.block.family.stone.StoneBaseBlock;
 import com.gumillea.inlandport.common.block.family.wooden.LogBlock;
 import com.gumillea.inlandport.common.block.family.wooden.WoodenBaseBlock;
 import com.gumillea.inlandport.common.item.FoodItem;
 import com.gumillea.inlandport.common.item.IPBoatItem;
 import com.gumillea.inlandport.common.item.RecordItem;
+import com.gumillea.inlandport.common.item.SimpleHatItem;
 import com.gumillea.inlandport.core.data.providers.client.*;
 import com.gumillea.inlandport.core.data.providers.server.IPBlockTagsProvider;
 import com.gumillea.inlandport.core.data.providers.server.IPDataMapProvider;
@@ -29,6 +32,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -40,7 +44,7 @@ public class AutoDataGeneHelper {
 
    public static void autoGeneLangJson(IPLanguageProvider provider, String modId) {
         for (Block block : getBlocks(modId)) {
-            if (block instanceof WallSignBlock || block instanceof WallHangingSignBlock) continue;
+            if (block instanceof WallSignBlock || block instanceof WallHangingSignBlock || block instanceof WallTorchBlock) continue;
 
             switch (RegUtil.getBlockSuffix(block)) {
                 case "_basket" -> provider.addBaskets(block);
@@ -101,6 +105,7 @@ public class AutoDataGeneHelper {
                 case DiggerItem ignored -> provider.addHandheldItem(item);
                 case SwordItem ignored -> provider.addHandheldItem(item);
                 case SpawnEggItem ignored -> provider.addSpawnEggItem(item);
+                case SimpleHatItem ignored -> provider.addSimpleHat(item);
                 default -> provider.addItem(item);
             }
         }
@@ -113,6 +118,14 @@ public class AutoDataGeneHelper {
             Block baseBlock;
 
             switch (block) {
+                case CropBlock cropBlock -> {
+                    switch (cropBlock) {
+                        case Age7Block age7 -> provider.cropBlock(age7);
+                        case Age3Block age3 -> provider.cropBlock(age3, BlockStateProperties.AGE_3);
+                        default -> {}
+                    }
+                }
+                case BushBlock bushBlock -> provider.crossBlock(bushBlock);
                 case LogBlock logBlock -> provider.logOrWoodBlock(logBlock);
                 case StickyBlock ignored -> provider.honeyBlock(block);
                 case StorageBlock storageBlock -> provider.cubeBottomTop(storageBlock);
@@ -120,6 +133,7 @@ public class AutoDataGeneHelper {
                 case DoorBlock door -> provider.doorBlock(door);
                 case TrapDoorBlock door -> provider.trapDoorBlock(door);
                 case EdibleBlock edibleBlock -> provider.edibleBlock(edibleBlock);
+                case TorchBlock torchBlock -> provider.torchBlock(torchBlock);
                 case StandingSignBlock sign -> {
                     baseBlock = tryFindBaseBlock(modId, RegUtil.path(sign), "sign");
                     provider.signBlock(sign, baseBlock);
@@ -180,6 +194,7 @@ public class AutoDataGeneHelper {
             switch (block) {
                 case StoneBaseBlock family -> provider.addStoneFamily(family);
                 case WoodenBaseBlock family -> provider.addWoodenFamily(family);
+                case FlowerBlock ignored -> provider.tag(BlockTags.SMALL_FLOWERS).add(block);
                 case ButtonBlock ignored -> provider.tag(BlockTags.BUTTONS).add(block);
                 case PressurePlateBlock ignored -> provider.tag(BlockTags.PRESSURE_PLATES).add(block);
                 case SlabBlock ignored -> provider.tag(BlockTags.SLABS).add(block);
@@ -189,11 +204,7 @@ public class AutoDataGeneHelper {
                 case WallBlock ignored -> provider.tag(BlockTags.WALLS).add(block);
                 case LeavesBlock ignored -> provider.tag(BlockTags.LEAVES).add(block);
                 case StorageBlock ignored -> {
-                    if (RegUtil.path(block).endsWith("_crate")) {
-                        provider.tag(BlockTags.MINEABLE_WITH_AXE).add(block);
-                    } else {
-                        provider.tag(BlockTags.MINEABLE_WITH_HOE).add(block);
-                    }
+                    if (RegUtil.path(block).endsWith("_crate")) provider.tag(BlockTags.MINEABLE_WITH_AXE).add(block);
                     provider.addIfExist(Tags.Blocks.STORAGE_BLOCKS, block);
                 }
                 case StickyBlock stickyBlock -> {
@@ -202,7 +213,26 @@ public class AutoDataGeneHelper {
                     }
                     provider.addIfExist(Tags.Blocks.STORAGE_BLOCKS, block);
                 }
-                default -> {}
+                case CropBlock ignored -> {
+                    provider.tag(BlockTags.CROPS).add(block);
+                }
+                default -> {
+                    switch (RegUtil.getBlockSuffix(block)) {
+                        case "_ore" -> {
+                            provider.addIfExist(Tags.Blocks.ORES, block);
+                            provider.addIfExist(BlockTags.MINEABLE_WITH_PICKAXE, block);
+                            Block deepslate = CompatUtil.block(modId, "deepslate_" + RegUtil.path(block));
+                            if (deepslate != null) {
+                                provider.addIfExist(Tags.Blocks.ORES_IN_GROUND_STONE, block);
+
+                                provider.addIfExist(Tags.Blocks.ORES, deepslate);
+                                provider.addIfExist(BlockTags.MINEABLE_WITH_PICKAXE, deepslate);
+                                provider.addIfExist(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, deepslate);
+                            }
+                        }
+                        default -> {}
+                    }
+                }
             }
         }
     }
@@ -211,6 +241,14 @@ public class AutoDataGeneHelper {
         for (Block block : getBlocks(modId)) {
             switch (block) {
                 case WoodenBaseBlock family -> provider.addWoodenFamily(family);
+                case CropBlock cropBlock -> {
+                    switch (cropBlock) {
+                        case Age7Block age7 -> provider.addIfExist(Tags.Items.SEEDS, age7.getSeed().asItem());
+                        case Age3Block age3 -> provider.addIfExist(Tags.Items.SEEDS, age3.getSeed().asItem());
+                        default -> {}
+                    }
+                }
+                case FlowerBlock ignored -> provider.copy(BlockTags.SMALL_FLOWERS, ItemTags.SMALL_FLOWERS);
                 case SlabBlock ignored -> provider.copy(BlockTags.SLABS, ItemTags.SLABS);
                 case StairBlock ignored -> provider.copy(BlockTags.STAIRS, ItemTags.STAIRS);
                 case StorageBlock ignored ->  provider.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
@@ -228,17 +266,55 @@ public class AutoDataGeneHelper {
                         if (edibleBlock.getSlice() != null) provider.addIfExist(IPItemTags.CAKE_SLICE, edibleBlock.getSlice().getItem());
                     }
                 }
-                default -> {}
+                default -> {
+                    switch (RegUtil.getBlockSuffix(block)) {
+                        case "_ore" -> {
+                            provider.copy(Tags.Blocks.ORES, Tags.Items.ORES);
+                            provider.copy(BlockTags.MINEABLE_WITH_PICKAXE, Tags.Items.ORES);
+                            Block deepslate = CompatUtil.block(modId, "deepslate_" + RegUtil.path(block));
+                            if (deepslate != null) {
+                                provider.copy(Tags.Blocks.ORES_IN_GROUND_STONE, Tags.Items.ORES_IN_GROUND_STONE);
+                                provider.copy(Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, Tags.Items.ORES_IN_GROUND_DEEPSLATE);
+                            }
+                        }
+                        default -> {}
+                    }
+                }
             }
         }
 
         for (Item item : getItems(modId)) {
             switch (item) {
+                case SimpleHatItem ignored -> provider.tag(IPItemTags.CURIOS_HEAD).add(item);
+                case ArmorItem armor -> {
+                    provider.tag(Tags.Items.ARMORS).add(item);
+                    switch (armor.getType()) {
+                        case HELMET ->  {
+                            provider.tag(ItemTags.HEAD_ARMOR).add(item);
+                            if (armor.isEnchantable(RegUtil.stack(armor))) provider.tag(ItemTags.HEAD_ARMOR_ENCHANTABLE).add(item);
+                        }
+                        case CHESTPLATE ->  {
+                            provider.tag(ItemTags.CHEST_ARMOR).add(item);
+                            if (armor.isEnchantable(RegUtil.stack(armor))) provider.tag(ItemTags.CHEST_ARMOR_ENCHANTABLE).add(item);
+                        }
+                        case LEGGINGS ->  {
+                            provider.tag(ItemTags.LEG_ARMOR).add(item);
+                            if (armor.isEnchantable(RegUtil.stack(armor))) provider.tag(ItemTags.LEG_ARMOR_ENCHANTABLE).add(item);
+                        }
+                        case BOOTS ->  {
+                            provider.tag(ItemTags.FOOT_ARMOR).add(item);
+                            if (armor.isEnchantable(RegUtil.stack(armor))) provider.tag(ItemTags.FOOT_ARMOR_ENCHANTABLE).add(item);
+                        }
+                    }
+                }
                 case AxeItem ignored -> provider.tag(ItemTags.AXES).add(item);
                 case HoeItem ignored -> provider.tag(ItemTags.HOES).add(item);
                 case PickaxeItem ignored -> provider.tag(ItemTags.PICKAXES).add(item);
                 case SwordItem ignored -> provider.tag(ItemTags.SWORDS).add(item);
                 case ShovelItem ignored -> provider.tag(ItemTags.SHOVELS).add(item);
+                case ShieldItem ignored -> provider.tag(Tags.Items.TOOLS_SHIELD).add(item);
+                case ShearsItem ignored -> provider.tag(Tags.Items.TOOLS_SHEAR).add(item);
+                case FlintAndSteelItem ignored -> provider.tag(Tags.Items.TOOLS_IGNITER).add(item);
                 case RecordItem ignored -> provider.tag(Tags.Items.MUSIC_DISCS).add(item);
                 case FoodItem food -> {
                     switch (food.getType()) {
@@ -249,8 +325,14 @@ public class AutoDataGeneHelper {
                         case RAW_MEAT -> provider.tag(Tags.Items.FOODS_RAW_MEAT).add(item);
                         case COOKED_MEAT -> provider.tag(Tags.Items.FOODS_COOKED_MEAT).add(item);
 
-                        case RAW_FISH -> provider.tag(Tags.Items.FOODS_RAW_FISH).add(item);
-                        case COOKED_FISH -> provider.tag(Tags.Items.FOODS_COOKED_FISH).add(item);
+                        case RAW_FISH -> {
+                            provider.tag(Tags.Items.FOODS_RAW_FISH).add(item);
+                            provider.tag(ItemTags.FISHES).add(item);
+                        }
+                        case COOKED_FISH -> {
+                            provider.tag(Tags.Items.FOODS_COOKED_FISH).add(item);
+                            provider.tag(ItemTags.FISHES).add(item);
+                        }
 
                         case FRUIT -> provider.tag(Tags.Items.FOODS_FRUIT).add(item);
                         case BERRY -> provider.tag(Tags.Items.FOODS_BERRY).add(item);
@@ -270,6 +352,14 @@ public class AutoDataGeneHelper {
                     }
                 }
                 default -> {
+                    switch (RegUtil.getItemSuffix(item)) {
+                        case "_ingot" -> {
+                            provider.tag(Tags.Items.INGOTS).add(item);
+                            Item nugget = CompatUtil.item(modId, RegUtil.path(item).replace("ingot", "nugget"));
+                            if (nugget != null) provider.tag(Tags.Items.NUGGETS).add(nugget);
+                        }
+                        default -> {}
+                    }
                 }
             }
         }

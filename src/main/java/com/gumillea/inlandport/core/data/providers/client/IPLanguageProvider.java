@@ -49,8 +49,8 @@ public abstract class IPLanguageProvider extends LanguageProvider {
     public void addManualTranslations() {}
 
     public void addAdvancement(String path, String title, String description) {
-        this.add("advancements." + modId + path + ".title", title);
-        this.add("advancements." + modId + path + ".description", description);
+        add("advancements." + modId + path + ".title", title);
+        add("advancements." + modId + path + ".description", description);
     }
 
     public void addCreativeTabs(CreativeModeTab... tabs) {
@@ -68,136 +68,142 @@ public abstract class IPLanguageProvider extends LanguageProvider {
 
     public void addBlocks(Block... blocks) {
         for (Block block : blocks)
-            this.add(block, format(Objects.requireNonNull(RegUtil.key(block))));
+            add(block, format(Objects.requireNonNull(RegUtil.key(block))));
     }
 
     public void addBlock(Block block, String name) {
-        this.add(block, name);
+        add(block, name);
     }
 
     public void addBaskets(Block... blocks) {
         for (Block block : blocks)
-            this.add(block, "Basket of " + format(Objects.requireNonNull(RegUtil.key(block))).replace(" Basket", ""));
+            add(block, "Basket of " + format(Objects.requireNonNull(RegUtil.key(block))).replace(" Basket", ""));
     }
 
     public void addSacks(Block... blocks) {
         for (Block block : blocks)
-            this.add(block, "Sack of " + format(Objects.requireNonNull(RegUtil.key(block))).replace(" Sack", ""));
+            add(block, "Sack of " + format(Objects.requireNonNull(RegUtil.key(block))).replace(" Sack", ""));
     }
 
     public void addFluidTypes(FluidType... fluidTypes) {
         for (FluidType fluidType : fluidTypes) {
             ResourceLocation location = RegUtil.key(fluidType);
             String key = "fluid_type." + location.getNamespace() + "." + location.getPath();
-            this.add(key, format(location).replace(" Fluid", ""));
+            add(key, format(location).replace(" Fluid", ""));
         }
     }
 
     public void addFluidType(FluidType fluidType, String name) {
         ResourceLocation location = RegUtil.key(fluidType);
         String key = "fluid_type." + location.getNamespace() + "." + location.getPath();
-        this.add(key, name);
+        add(key, name);
     }
 
     public void addPotions(Potion... potions) {
         for (Potion potion : potions) {
             ResourceLocation modId = RegUtil.key(potion);
             String key = "item.minecraft.potion.effect." + modId.getNamespace() + "." + modId.getPath();
-            this.add(key, "Potion of " + format(modId).replace("Long ", "").replace("Strong ", ""));
+            add(key, "Potion of " + format(modId).replace("Long ", "").replace("Strong ", ""));
             String key2 = "item.minecraft.splash_potion.effect." + modId.getNamespace() + "." + modId.getPath();
-            this.add(key2,  "Splash Potion of " + format(modId).replace("Long ", "").replace("Strong ", ""));
+            add(key2,  "Splash Potion of " + format(modId).replace("Long ", "").replace("Strong ", ""));
             String key3 = "item.minecraft.lingering_potion.effect." + modId.getNamespace() + "." + modId.getPath();
-            this.add(key3,  "Lingering Potion of " + format(modId).replace("Long ", "").replace("Strong ", ""));
+            add(key3,  "Lingering Potion of " + format(modId).replace("Long ", "").replace("Strong ", ""));
             String key4 = "item.minecraft.tipped_arrow.effect." + modId.getNamespace() + "." + modId.getPath();
-            this.add(key4,  "Arrow of " + format(modId).replace("Long ", "").replace("Strong ", ""));
+            add(key4,  "Arrow of " + format(modId).replace("Long ", "").replace("Strong ", ""));
         }
     }
 
     public void addEffects(MobEffect... effects) {
         for (MobEffect effect : effects) {
-            this.add(effect, format(RegUtil.key(effect)));
+            add(effect, format(RegUtil.key(effect)));
             if (effect instanceof SimpleMobEffect simpleEffect && simpleEffect.hasDescription()) {
-                this.addEffectDescription(simpleEffect, simpleEffect.getDescription());
+                addEffectDescription(simpleEffect, simpleEffect.getDescription());
             }
         }
     }
 
     public void addEffectDescription(MobEffect effect, String description) {
             String path = effect.getDescriptionId();
-            this.add(path + ".description", description);
+            add(path + ".description", description);
     }
 
     public void addEffectWithDescription(MobEffect effect, String description) {
-        this.addEffects(effect);
-        this.addEffectDescription(effect, description);
+        addEffects(effect);
+        addEffectDescription(effect, description);
     }
 
     public void addItem(Item... items) {
         for (Item item : items){
-            this.add(item, format(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item))).replace(" With ", " with ").replace(" De ", " de ").replace(" And ", " and "));
+            add(item, format(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item))).replace(" With ", " with ").replace(" De ", " de ").replace(" And ", " and "));
             if (item instanceof TooltipItem tooltipItem && tooltipItem.hasTooltip()) {
                 String tooltip = tooltipItem.getTooltip();
-                if (!tooltip.startsWith("tooltip.")) this.addTooltip(item, tooltip);
+                if (!tooltip.startsWith("tooltip.")) addTooltip(item, tooltip);
             }
         }
     }
 
+    public void skipItem(Item... items) {
+        for (Item item : items){
+            keys.add(item.getDescriptionId());
+        }
+    }
+
     public void addTooltip(String name, String description) {
-        this.add("tooltip." + modId + "." + name, description);
+        add("tooltip." + modId + "." + name, description);
     }
 
     public void addTooltip(Item item, @Nullable String suffix, String description) {
         suffix = suffix != null ? suffix : "";
-        this.add("tooltip." + modId + "." + RegUtil.path(item) + suffix, description);
+        add("tooltip." + modId + "." + RegUtil.path(item) + suffix, description);
     }
 
     public void addTooltip(Item item, String description) {
-        this.addTooltip(item, null, description);
+        addTooltip(item, null, description);
     }
 
     public void addItem(Item item, String name) {
-        this.add(item, name);
+        add(item, name);
     }
 
     public void addSlice(Item... items) {
         for (Item item : items)
-            this.add(item, "Slice of " + format(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item))).replace(" Slice", ""));
+            add(item, "Slice of " + format(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item))).replace(" Slice", ""));
     }
 
     public void addChestBoats(Item... items) {
         for (Item item : items)
-            this.add(item, format(Objects.requireNonNull(RegUtil.key(item))).replace(" Chest", "") + " with Chest");
+            add(item, format(Objects.requireNonNull(RegUtil.key(item))).replace(" Chest", "") + " with Chest");
     }
 
     public void addTradeItem(Item... items) {
         for (Item item : items)
-            this.add(item, format(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item))).replace("ers ", "er's "));
+            add(item, format(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item))).replace("ers ", "er's "));
     }
 
     public void addJeiItemDescription(String description, Item... items) {
         for (Item item : items) {
             ResourceLocation location = RegUtil.key(item);
             String key = "jei." + location.getNamespace() + "." + location.getPath() + ".desc";
-            this.add(key, description);
+            add(key, description);
         }
     }
 
     public void addMessage(String path, String message) {
         String key = "message."+ modId + "." + path;
-        this.add(key, message);
+        add(key, message);
     }
 
     public void addJukeboxSong(Holder<Item> item, String title) {
         String key = "jukebox_song."+ modId + "." + RegUtil.path(item.value()).replace("music_disc_", "");
-        this.add(key, title);
+        add(key, title);
     }
 
     public void addItemTag(TagKey<Item> tagKey, String name) {
-        this.add("tag.item." + tagKey.location().toLanguageKey().replace("/", "."), name);
+        add("tag.item." + tagKey.location().toLanguageKey().replace("/", "."), name);
     }
 
     public void addBlockTag(TagKey<Block> tagKey, String name) {
-        this.add("tag.block." + tagKey.location().toLanguageKey().replace("/", "."), name);
+        add("tag.block." + tagKey.location().toLanguageKey().replace("/", "."), name);
     }
 
     public static String format(ResourceLocation location) {
@@ -206,12 +212,12 @@ public abstract class IPLanguageProvider extends LanguageProvider {
 
     @Override
     public void add(@NotNull String key, @NotNull String value) {
-        if (this.isAutoGenerating) {
-            if (this.keys.contains(key)) {
+        if (isAutoGenerating) {
+            if (keys.contains(key)) {
                 return;
             }
         } else {
-            this.keys.add(key);
+            keys.add(key);
         }
         super.add(key, value);
     }

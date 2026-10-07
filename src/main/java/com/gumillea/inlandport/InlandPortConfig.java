@@ -39,7 +39,9 @@ public class InlandPortConfig {
 
         public static ModConfigSpec.BooleanValue ENABLE_DODGE_CHANCE;
         public static ModConfigSpec.BooleanValue ENABLE_DEBUFF_RESISTANCE;
+        public static ModConfigSpec.BooleanValue ENABLE_MANA_RESISTANCE;
         public static ModConfigSpec.BooleanValue ENABLE_HEALING_EFFICIENCY;
+        public static ModConfigSpec.BooleanValue ENABLE_MANA_INFUSION;
         public static ModConfigSpec.BooleanValue ENABLE_ITEM_USAGE_SPEED;
 
         Startup(ModConfigSpec.Builder builder) {
@@ -55,7 +57,9 @@ public class InlandPortConfig {
             builder.push("Attribute");
             ENABLE_DODGE_CHANCE = builder.comment("Enables the dodge chance attribute.").define("dodgeChance", true);
             ENABLE_DEBUFF_RESISTANCE = builder.comment("Enables the debuff resistance attribute.").define("debuffResistance", true);
+            ENABLE_MANA_RESISTANCE = builder.comment("Enables the mana resistance attribute.").define("manaResistance", true);
             ENABLE_HEALING_EFFICIENCY = builder.comment("Enables the healing efficiency attribute.").define("healingEfficiency", true);
+            ENABLE_MANA_INFUSION = builder.comment("Enables the mana infusion attribute.").define("manaInfusion", true);
             ENABLE_ITEM_USAGE_SPEED = builder.comment("Enables the item usage speed attribute.").define("itemUsageSpeed", true);
             builder.pop();
         }

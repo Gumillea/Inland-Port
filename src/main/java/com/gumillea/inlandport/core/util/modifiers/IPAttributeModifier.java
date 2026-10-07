@@ -24,6 +24,14 @@ public class IPAttributeModifier {
             AttrUtil.add(MobEffects.WITHER, IPAttributes.DEBUFF_RESISTANCE, InlandPort.MODID, -0.1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
         }
 
+        if (InlandPortConfig.Startup.ENABLE_MANA_RESISTANCE.get()) {
+            AttrUtil.add(MobEffects.WITHER, IPAttributes.MANA_RESISTANCE, InlandPort.MODID, -0.1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+        }
+
+        if (InlandPortConfig.Startup.ENABLE_MANA_INFUSION.get()) {
+            AttrUtil.add(MobEffects.INVISIBILITY, IPAttributes.MANA_INFUSION, InlandPort.MODID, 1.0, AttributeModifier.Operation.ADD_VALUE);
+        }
+
         if (InlandPortConfig.Startup.ENABLE_DODGE_CHANCE.get()) {
             AttrUtil.add(MobEffects.MOVEMENT_SPEED, IPAttributes.DODGE_CHANCE, InlandPort.MODID, 0.05, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
             AttrUtil.add(MobEffects.LUCK, IPAttributes.DODGE_CHANCE, InlandPort.MODID, 0.15, AttributeModifier.Operation.ADD_MULTIPLIED_BASE);

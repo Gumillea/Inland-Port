@@ -199,6 +199,22 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
             getVariantBuilder(sign).forAllStates(state -> ConfiguredModel.builder().modelFile(signModel).build());
         }
     }
+    public void torchBlock(Block block) {
+        ResourceLocation texture = blockTexture(block);
+        String path = RegUtil.path(block);
+        Block wBlock = CompatUtil.block(modId, path.replace("_torch", "_wall_torch"));
+
+        ModelFile standing = models().torch(RegUtil.path(block), texture).renderType("cutout");
+        getVariantBuilder(block).forAllStates(state -> ConfiguredModel.builder().modelFile(standing).build());
+
+        ModelFile wall = models().torchWall(BuiltInRegistries.BLOCK.getKey(wBlock).getPath(), texture).renderType("cutout");
+        getVariantBuilder(wBlock).forAllStates(state -> {
+            Direction facing = state.getValue(WallTorchBlock.FACING);
+            return ConfiguredModel.builder().modelFile(wall).rotationY((int) facing.getClockWise().toYRot()).build();
+        });
+
+        basicItem(block);
+    }
 
     public void honeyBlock(Block block) {
         String path = RegUtil.path(block);
@@ -277,16 +293,27 @@ public abstract class IPBlockStateProvider extends BlockStateProvider {
         cropBlock(block, BlockStateProperties.AGE_7);
     }
 
+    public void crossBlock(@NotNull Block block) {
+        ResourceLocation texture = blockTexture(block);
+
+        simpleBlock(block, models().cross(texture.getPath(), texture).renderType("cutout"));
+        basicItem(block);
+    }
+
     public void simpleBlockItem(@NotNull Block block) {
         this.simpleBlockItem(block, existingModel(blockTexture(block)));
     }
 
-    public ItemModelBuilder basicItem(Item item) {
-        return this.basicItem(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)));
+    public ItemModelBuilder basicItem(Block block) {
+        return basicItem(Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(block)), "block/");
     }
 
-    public ItemModelBuilder basicItem(ResourceLocation item) {
-        return itemModels().getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), "item/" + item.getPath()));
+    public ItemModelBuilder basicItem(Item item) {
+        return basicItem(Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item)), "item/");
+    }
+
+    public ItemModelBuilder basicItem(ResourceLocation item, String path) {
+        return itemModels().getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile("item/generated")).texture("layer0", ResourceLocation.fromNamespaceAndPath(item.getNamespace(), path + item.getPath()));
     }
 
     public ModelFile existingModel(ResourceLocation location) {

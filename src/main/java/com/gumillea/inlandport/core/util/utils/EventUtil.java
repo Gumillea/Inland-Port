@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.neoforged.bus.api.ICancellableEvent;
 import net.neoforged.neoforge.common.BasicItemListing;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
@@ -98,6 +99,34 @@ public class EventUtil {
 
     public static void entityInteract(PlayerInteractEvent.EntityInteract event, Predicate<Entity> targetFilter, Runnable task) {
         entityInteract(event, targetFilter, null, null, task);
+    }
+
+    public static void useItem(PlayerInteractEvent event, Predicate<ItemStack> itemFilter, @Nullable Holder.Reference<GameEvent> gameEvent, Runnable task, boolean cancel) {
+        Level level = event.getLevel();
+        Player player = event.getEntity();
+        InteractionHand hand = event.getHand();
+        ItemStack inHand = player.getItemInHand(hand);
+        BlockPos pos = event.getPos();
+
+        if (itemFilter.test(inHand)) {
+            player.swing(hand);
+
+            if (!level.isClientSide) {
+                task.run();
+                if (gameEvent != null) {
+                    level.gameEvent(gameEvent, pos, GameEvent.Context.of(player));
+                }
+            }
+
+            if (cancel && event instanceof ICancellableEvent cancellableEvent) {
+                cancellableEvent.setCanceled(true);
+            }
+
+        }
+    }
+
+    public static void useItem(PlayerInteractEvent event, Predicate<ItemStack> itemFilter, Runnable task) {
+        useItem(event, itemFilter, null, task, false);
     }
 
     public static void addTrades(VillagerTradesEvent event, VillagerProfession profession, int level, VillagerTrades.ItemListing... trades) {

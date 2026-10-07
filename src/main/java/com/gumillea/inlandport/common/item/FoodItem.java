@@ -31,7 +31,8 @@ public class FoodItem extends TooltipItem {
     }
 
     public int getUseDuration(ItemStack stack, LivingEntity living) {
-        return IPUtil.toTicks(duration);
+        int ticks = IPUtil.toTicks(duration);
+        return ticks == (defaultDuration() * 20) ? super.getUseDuration(stack,living) : ticks;
     }
 
     public SoundEvent getEatingSound() {

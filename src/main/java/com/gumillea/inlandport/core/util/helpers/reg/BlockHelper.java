@@ -1,6 +1,8 @@
 package com.gumillea.inlandport.core.util.helpers.reg;
 
 import com.gumillea.inlandport.common.block.EdibleBlock;
+import com.gumillea.inlandport.common.block.crop.Age3Block;
+import com.gumillea.inlandport.common.block.crop.Age7Block;
 import com.gumillea.inlandport.common.block.family.SimpleBaseBlock;
 import com.gumillea.inlandport.common.block.family.Variant;
 import com.gumillea.inlandport.common.block.family.stone.StoneBaseBlock;
@@ -70,14 +72,22 @@ public class BlockHelper {
         return regWithoutItem(name, supplier, null);
     }
 
-    public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier, RegConditions conditions) {
+    public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier, Item.Properties itemProps, RegConditions conditions) {
         DeferredHolder<Block, T> block = RegHelper.reg(blockReg, name, supplier, null, conditions);
-        if (block != null) RegHelper.reg(itemReg, name, () -> new BlockItem(block.value(), new Item.Properties()), () -> new Item(new Item.Properties()), conditions);
+        if (block != null) RegHelper.reg(itemReg, name, () -> new BlockItem(block.value(), itemProps), () -> new Item(new Item.Properties()), conditions);
         return block;
     }
 
+    public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier, RegConditions conditions) {
+        return reg(name, supplier, new Item.Properties(), conditions);
+    }
+
+    public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier, Item.Properties itemProps) {
+        return reg(name, supplier, itemProps, null);
+    }
+
     public <T extends Block> DeferredHolder<Block, T> reg(String name, Supplier<T> supplier) {
-        return reg(name, supplier, null);
+        return reg(name, supplier, new Item.Properties());
     }
 
     public DeferredHolder<Block, Block> regPlaceableFood(String name, BlockBehaviour.Properties blockProps, Item.Properties itemProps, EdibleBlock.Type type, Supplier<Item> slice, int maxBites, RegConditions conditions) {
@@ -122,6 +132,31 @@ public class BlockHelper {
         return regPie(name, color, itemProps, slice, null);
     }
 
+    public DeferredHolder<Block, Block> regAge7Crop(String name, BlockBehaviour.Properties prop, int growSpeed, Supplier<Item> seed, RegConditions conditions) {
+        return regWithoutItem(name, () -> new Age7Block(prop, growSpeed, seed), conditions);
+    }
+
+    public DeferredHolder<Block, Block> regAge7Crop(String name, int growSpeed, Supplier<Item> seed, RegConditions conditions) {
+        return regAge7Crop(name, BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT), growSpeed, seed, conditions);
+    }
+
+    public DeferredHolder<Block, Block> regAge7Crop(String name, Supplier<Item> seed) {
+        return regAge7Crop(name, BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT), 0, seed, null);
+    }
+
+    public DeferredHolder<Block, Block> regAge3Crop(String name, BlockBehaviour.Properties prop, int growSpeed, Supplier<Item> seed, RegConditions conditions) {
+        return regWithoutItem(name, () -> new Age3Block(prop, growSpeed, seed), conditions);
+    }
+
+    public DeferredHolder<Block, Block> regAge3Crop(String name, int growSpeed, Supplier<Item> seed, RegConditions conditions) {
+        return regAge3Crop(name, BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT), growSpeed, seed, conditions);
+    }
+
+    public DeferredHolder<Block, Block> regAge3Crop(String name, Supplier<Item> seed) {
+        return regAge3Crop(name, BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT), 0, seed, null);
+    }
+
+
     public DeferredHolder<EntityType<?>, EntityType<IPBoat>> regBoat(String name) {
         DeferredHolder<EntityType<?>, EntityType<IPBoat>> boat = entityReg.register(name, () -> EntityType.Builder.of(IPBoat::new, MobCategory.MISC).sized(1.375F, 0.5625F).clientTrackingRange(10).build(name));
         itemReg.register(name, () -> new IPBoatItem(false, boat.getId(), new Item.Properties().stacksTo(1)));
@@ -134,6 +169,23 @@ public class BlockHelper {
         itemReg.register(name, () -> new IPBoatItem(true, boat.getId(), new Item.Properties().stacksTo(1)));
         CHEST_BOATS.add(boat);
         return boat;
+    }
+
+    public Pair<DeferredHolder<Block, Block>, DeferredHolder<Block, Block>> regTorchBlocks(String name, Supplier<? extends Block> standingSupplier, Supplier<? extends Block> wallSupplier) {
+        DeferredHolder<Block, Block> standing = blockReg.register(name + "_torch", standingSupplier);
+        DeferredHolder<Block, Block> wall = blockReg.register(name + "_wall_torch", wallSupplier);
+
+        return Pair.of(standing, wall);
+    }
+
+    public void regTorchItem(String name, Pair<DeferredHolder<Block, Block>, DeferredHolder<Block, Block>> sign) {
+        itemReg.register(name, () -> new StandingAndWallBlockItem(sign.first.get(), sign.second.get(), new Item.Properties(), Direction.DOWN));
+    }
+
+    public DeferredHolder<Block, Block> regTorch(String name, Supplier<? extends Block> standingSupplier, Supplier<? extends Block> wallSupplier) {
+        Pair<DeferredHolder<Block, Block>, DeferredHolder<Block, Block>> torchs = regTorchBlocks(name, standingSupplier, wallSupplier);
+        regTorchItem(name + "_torch", torchs);
+        return torchs.first;
     }
 
     public Pair<DeferredHolder<Block, ? extends Block>, DeferredHolder<Block, ? extends Block>> regSignBlocks(String name, Supplier<? extends Block> standingSupplier, Supplier<? extends Block> wallSupplier) {

@@ -13,17 +13,32 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class IPAttributes {
     public static final AttrHelper HELPER = new AttrHelper(InlandPort.MODID);
 
+    public static final DeferredHolder<Attribute, Attribute> ACCURACY_RATE = HELPER.regRanged("accuracy_rate", 1.0, 0, 2.0);
     public static final DeferredHolder<Attribute, Attribute> DODGE_CHANCE = HELPER.regRanged("dodge_chance", 1.0, 0, 2.0);
+    public static final DeferredHolder<Attribute, Attribute> MANA_RESISTANCE = HELPER.regRanged("mana_resistance", 1.0, 0.0, 2.0);
     public static final DeferredHolder<Attribute, Attribute> DEBUFF_RESISTANCE = HELPER.regRanged("debuff_resistance", 1.0, 0, 2.0);
+    public static final DeferredHolder<Attribute, Attribute> MANA_INFUSION = HELPER.regRanged("mana_infusion", 0, 0, 1024.0);
     public static final DeferredHolder<Attribute, Attribute> HEALING_EFFICIENCY = HELPER.regRanged("healing_efficiency", 1.0, 0, 1024.0);
     public static final DeferredHolder<Attribute, Attribute> ITEM_USAGE_SPEED = HELPER.regRanged("item_usage_speed", 1.0, 0, 1024.0);
+
+    public static double getAccuracyRate(LivingEntity living) {
+        return AttrUtil.get(living, ACCURACY_RATE) - 1;
+    }
 
     public static double getDodgeChance(LivingEntity living) {
         return AttrUtil.get(living, DODGE_CHANCE) - 1;
     }
 
+    public static double getManaResistance(LivingEntity living) {
+        return AttrUtil.get(living, MANA_RESISTANCE) - 1;
+    }
+
     public static double getDebuffResistance(LivingEntity living) {
         return AttrUtil.get(living, DEBUFF_RESISTANCE) - 1;
+    }
+
+    public static double getManaInfusion(LivingEntity living) {
+        return AttrUtil.get(living, MANA_INFUSION);
     }
 
     public static double getHealingEfficiency(LivingEntity living) {

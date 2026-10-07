@@ -1,6 +1,11 @@
 package com.gumillea.inlandport.core.util.helpers.reg;
 
+import com.gumillea.inlandport.common.block.family.SimpleBaseBlock;
+import com.gumillea.inlandport.common.block.family.Variant;
+import com.gumillea.inlandport.common.block.family.stone.StoneBaseBlock;
+import com.gumillea.inlandport.common.block.family.wooden.WoodenBaseBlock;
 import com.gumillea.inlandport.common.item.FoodItem;
+import com.gumillea.inlandport.common.item.IPArmorItem;
 import com.gumillea.inlandport.core.api.record.TabContent;
 import com.gumillea.inlandport.core.util.helpers.AutoDataGeneHelper;
 import com.gumillea.inlandport.core.util.tags.IPItemTags;
@@ -22,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static net.minecraft.world.item.CreativeModeTabs.*;
 
@@ -98,7 +104,30 @@ public class CreativeTabHelper {
             ItemStack stack = RegUtil.stack(item);
             if (RegHelper.isDisabled(stack)) continue;
 
-            tab(event, add(TOOLS_AND_UTILITIES, () -> {
+            tab(event, add(BUILDING_BLOCKS, () -> {
+                if (item instanceof BlockItem blockItem) {
+                    switch (blockItem.getBlock()) {
+                        case WoodenBaseBlock base -> {
+                            for (Item wood : Variant.getAllItems(base, WoodenBaseBlock.REG_MAP)) {
+                                insertBefore(event, Items.BAMBOO_BLOCK, RegUtil.stack(wood));
+                            }
+                        }
+                        case StoneBaseBlock base -> {
+                            for (Item stone : Variant.getAllItems(base, StoneBaseBlock.REG_MAP)) {
+                                insertBefore(event, Items.BRICKS, RegUtil.stack(stone));
+                            }
+                        }
+                        case SimpleBaseBlock base -> {
+                            for (Item block : Variant.getAllItems(base, SimpleBaseBlock.REG_MAP)) {
+                                insertBefore(event, Items.NETHERRACK, RegUtil.stack(block));
+                            }
+                        }
+                        default -> {}
+                    }
+                }
+            }),
+
+                    add(TOOLS_AND_UTILITIES, () -> {
                         insertAfter(event, ItemTags.BOATS, Items.CHERRY_CHEST_BOAT, stack);
                         insertAfter(event, Tags.Items.MUSIC_DISCS, Items.MUSIC_DISC_PIGSTEP, stack);}),
 
@@ -196,6 +225,14 @@ public class CreativeTabHelper {
 
     public static void insertBefore(BuildCreativeModeTabContentsEvent event, Item target, Item... items) {
         insertBefore(event, target, Arrays.stream(items).map(RegUtil::stack).toArray(ItemStack[]::new));
+    }
+
+    public static void insertArmors(BuildCreativeModeTabContentsEvent event, Item target, Item armor) {
+        if (armor instanceof IPArmorItem ip) {
+            for (Item item : ip.getArmors()) {
+                insertAfter(event, target, item);
+            }
+        }
     }
 
     public static void ignore(Item... items) {
