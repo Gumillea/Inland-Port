@@ -19,6 +19,10 @@ public class ContainerFoodItem extends FoodItem {
         super(properties, sound, duration, type, tooltip, styles);
     }
 
+    public ContainerFoodItem(Properties properties, SoundEvent sound, FoodItem.Type type) {
+        this(properties, sound, getDefaultDuration(), type, null);
+    }
+
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity living) {
         super.finishUsingItem(stack, level, living);
 

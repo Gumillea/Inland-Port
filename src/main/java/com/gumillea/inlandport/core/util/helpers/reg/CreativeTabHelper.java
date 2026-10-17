@@ -13,10 +13,12 @@ import com.gumillea.inlandport.core.util.utils.RegUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BrushableBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -27,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import static net.minecraft.world.item.CreativeModeTabs.*;
 
@@ -43,7 +44,7 @@ public class CreativeTabHelper {
     public void register(IEventBus bus) {
         cTReg.register(bus);
     }
-    
+
     public DeferredHolder<CreativeModeTab, CreativeModeTab> regTab(@Nullable String name, Object icon, CreativeModeTab.DisplayItemsGenerator generator) {
         String title = name == null ? "item_group." + modId : "item_group." + modId + "_" + name;
         name = name == null ? modId : modId + "_" + name;
@@ -84,8 +85,8 @@ public class CreativeTabHelper {
                 return stack;
             }
             case Supplier<?> supplier -> {
-               if (supplier.get() instanceof Item item) return RegUtil.stack(item);
-               if (supplier.get() instanceof Block block) return RegUtil.stack(block.asItem());
+                if (supplier.get() instanceof Item item) return RegUtil.stack(item);
+                if (supplier.get() instanceof Block block) return RegUtil.stack(block.asItem());
             }
             default -> {}
         }
@@ -105,27 +106,27 @@ public class CreativeTabHelper {
             if (RegHelper.isDisabled(stack)) continue;
 
             tab(event, add(BUILDING_BLOCKS, () -> {
-                if (item instanceof BlockItem blockItem) {
-                    switch (blockItem.getBlock()) {
-                        case WoodenBaseBlock base -> {
-                            for (Item wood : Variant.getAllItems(base, WoodenBaseBlock.REG_MAP)) {
-                                insertBefore(event, Items.BAMBOO_BLOCK, RegUtil.stack(wood));
+                        if (item instanceof BlockItem blockItem) {
+                            switch (blockItem.getBlock()) {
+                                case WoodenBaseBlock base -> {
+                                    for (Item wood : Variant.getAllItems(base, WoodenBaseBlock.REG_MAP)) {
+                                        insertBefore(event, Items.BAMBOO_BLOCK, RegUtil.stack(wood));
+                                    }
+                                }
+                                case StoneBaseBlock base -> {
+                                    for (Item stone : Variant.getAllItems(base, StoneBaseBlock.REG_MAP)) {
+                                        insertBefore(event, Items.BRICKS, RegUtil.stack(stone));
+                                    }
+                                }
+                                case SimpleBaseBlock base -> {
+                                    for (Item block : Variant.getAllItems(base, SimpleBaseBlock.REG_MAP)) {
+                                        insertBefore(event, Items.NETHERRACK, RegUtil.stack(block));
+                                    }
+                                }
+                                default -> {}
                             }
                         }
-                        case StoneBaseBlock base -> {
-                            for (Item stone : Variant.getAllItems(base, StoneBaseBlock.REG_MAP)) {
-                                insertBefore(event, Items.BRICKS, RegUtil.stack(stone));
-                            }
-                        }
-                        case SimpleBaseBlock base -> {
-                            for (Item block : Variant.getAllItems(base, SimpleBaseBlock.REG_MAP)) {
-                                insertBefore(event, Items.NETHERRACK, RegUtil.stack(block));
-                            }
-                        }
-                        default -> {}
-                    }
-                }
-            }),
+                    }),
 
                     add(TOOLS_AND_UTILITIES, () -> {
                         insertAfter(event, ItemTags.BOATS, Items.CHERRY_CHEST_BOAT, stack);
@@ -135,6 +136,17 @@ public class CreativeTabHelper {
                         insertAfter(event, ItemTags.SMALL_FLOWERS, Items.LILY_OF_THE_VALLEY, stack);
                         insertAfter(event, ItemTags.TALL_FLOWERS, Items.PEONY, stack);
                         insertAfter(event, Tags.Items.SEEDS, Items.BEETROOT_SEEDS, stack);}),
+
+                    add(FUNCTIONAL_BLOCKS, () -> {
+                        if (item instanceof BlockItem blockItem) {
+                            if (blockItem.getBlock() instanceof BrushableBlock brushableBlock) {
+                                if (brushableBlock.getBrushSound() == SoundEvents.BRUSH_SAND) {
+                                    insertAfter(event, Items.SUSPICIOUS_SAND, stack);
+                                } else {
+                                    insertAfter(event, Items.SUSPICIOUS_GRAVEL, stack);
+                                }
+                            }
+                        }}),
 
                     add(FOOD_AND_DRINKS, () -> {
                         insertAfter(event, ItemTags.MEAT, Items.COOKED_RABBIT, stack);

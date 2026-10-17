@@ -5,6 +5,12 @@ import com.gumillea.inlandport.common.item.FoodItem;
 import com.gumillea.inlandport.common.item.IPArmorItem;
 import com.gumillea.inlandport.common.item.RecordItem;
 import com.gumillea.inlandport.core.api.record.RegConditions;
+import com.gumillea.inlandport.core.util.utils.CompatUtil;
+import com.gumillea.inlandport.core.util.utils.IPUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.food.FoodProperties;
@@ -15,13 +21,15 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ItemHelper {
 
     private final DeferredRegister<Item> itemReg;
-    private final String modId;
+    protected final String modId;
 
     public ItemHelper(String modId) {
         this.modId = modId;
@@ -158,6 +166,40 @@ public class ItemHelper {
 
     public DeferredHolder<Item, Item> regRecord(String name, Item.Properties properties) {
         return regRecord(name, properties, Rarity.RARE, null);
+    }
+
+    public DeferredHolder<Item, Item> regUpgradeSmithingTemplate(String name, @Nullable String material, RegConditions conditions) {
+        String base = "smithing_template." + name.replace("_smithing_template", ".");
+        Component upgrade = Component.translatable(Util.makeDescriptionId("upgrade", IPUtil.loc(modId, name.replace("_smithing_template", "")))).withStyle(ChatFormatting.GRAY);
+        Component appliesTo = Component.translatable(Util.makeDescriptionId("item", IPUtil.loc(modId, base + "applies_to"))).withStyle(ChatFormatting.BLUE);
+        Component ingredients = Component.translatable(Util.makeDescriptionId("item", IPUtil.loc(modId, base + "ingredients"))).withStyle(ChatFormatting.BLUE);
+        Component base_slot_description = Component.translatable(Util.makeDescriptionId("item", IPUtil.loc(modId, base + "base_slot_description")));
+        Component additions_slot_description = Component.translatable(Util.makeDescriptionId("item", IPUtil.loc(modId, base + "additions_slot_description")));
+        return reg(name, () -> new SmithingTemplateItem(appliesTo, ingredients, upgrade, base_slot_description, additions_slot_description, createIconList(material != null ? material : name), List.of(IPUtil.mcLoc("item/empty_armor_slot"))), conditions);
+    }
+
+    public DeferredHolder<Item, Item> regUpgradeSmithingTemplate(String name, RegConditions conditions) {
+       return regUpgradeSmithingTemplate(name, null, conditions);
+    }
+
+    public DeferredHolder<Item, Item> regUpgradeSmithingTemplate(String name) {
+        return regUpgradeSmithingTemplate(name, null, null);
+    }
+
+    private List<ResourceLocation> createIconList(String material) {
+        List<String> armor_slots = List.of("_helmet", "_chestplate", "_leggings", "_boots");
+        List<String> slots = List.of("_sword", "_shovel", "_axe", "_pickaxe", "_hoe");
+        List<ResourceLocation> list = new ArrayList<>();
+
+        for (String slot : armor_slots) {
+            if (CompatUtil.item(modId, material + slot) != null) list.add(IPUtil.mcLoc("item/empty_armor_slot" + slot));
+        }
+
+        for (String slot : slots) {
+            if (CompatUtil.item(modId, material + slot) != null) list.add(IPUtil.mcLoc("item/empty_slot" + slot));
+        }
+
+        return list;
     }
 
 }
