@@ -40,7 +40,10 @@ public class InlandPort {
         IPAttributes.HELPER.register(bus);
         IPSoundEvents.HELPER.register(bus);
         IPItems.HELPER.register(bus);
+        IPBlocks.HELPER.register(bus);
         IPRecipes.HELPER.register(bus);
+        IPBlockEntityTypes.HELPER.register(bus);
+        IPEntityTypes.HELPER.register(bus);
         IPConditions.CONDITION_CODECS.register(bus);
         IPLootModifiers.HELPER.register(bus);
         IPNetworkHandler.register(bus);
@@ -84,7 +87,7 @@ public class InlandPort {
         boolean client = event.includeClient();
         generator.addProvider(client, new TestLanguageProvider(output));
 
-        AutoDataGenerator.add(event, InlandPort.MODID, only(ITEM_MODEL, SOUND_DEFINITION));
+        AutoDataGenerator.add(event, InlandPort.MODID, only(ITEM_MODEL, SOUND_DEFINITION, BLOCK_MODEL));
     }
 
 }
