@@ -9,15 +9,11 @@ import com.gumillea.inlandport.core.util.utils.*;
 import com.gumillea.inlandport.test.reg.IPAttributes;
 import com.gumillea.inlandport.test.reg.IPNetworkHandler;
 import com.gumillea.inlandport.test.reg.IPSoundEvents;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -97,6 +93,7 @@ public class IPEvents {
         float damage = event.getAmount();
         Level level = event.getEntity().level();
         if (event.getSource().is(IPDamageTypeTags.BYPASSES_DODGE)) return;
+
         if (AttrUtil.has(target, IPAttributes.DODGE_CHANCE) && IPUtil.random(level, IPAttributes.getDodgeChance(target))) {
             LivingDodgedEvent dodgeEvent = new LivingDodgedEvent(target, event.getContainer());
             NeoForge.EVENT_BUS.post(dodgeEvent);
@@ -105,7 +102,8 @@ public class IPEvents {
                 event.setCanceled(true);
             }
         }
-        if (source != null && source.is(DamageTypeTags.BYPASSES_ARMOR) && AttrUtil.has(target, IPAttributes.MANA_RESISTANCE)) {
+
+        if (source != null && source.is(DamageTypes.MAGIC) && AttrUtil.has(target, IPAttributes.MANA_RESISTANCE)) {
             event.setAmount((float) (damage * (1 - IPAttributes.getManaResistance(target))));
         }
     }
